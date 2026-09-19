@@ -11,7 +11,7 @@ your Pair service operator, or your own self-hosted instance. **End users do not
 The local adapter connects outbound to the instance chosen during pairing; no public inbound port
 or fixed service domain is required on the user's machine.
 
-The beta package publication is pending publisher two-factor authentication. Once available:
+Install the published beta adapter:
 
 ```sh
 npm install -g @ai-cdl/pair-cli@beta

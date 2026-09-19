@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Connect your agent · AI-CDL Pair</title><link rel="stylesheet" href="/help.css"><link rel="icon" href="/icon-32.png"></head><body><main><nav aria-label="Help"><a href="/setup.html" aria-current="page">Setup</a><a href="/privacy.html">Data &amp; privacy</a><a href="/support.html">Support</a></nav>
 <h1>Your agent, inside Excel</h1><p>Associate a terminal once. Start its adapter when you need it, then reconnect from Excel. No setup prompt to paste into your agent each time.</p>
 <h2>1. Install the local adapter</h2><p>Requires Node.js 22.12+ and your chosen harness installed and signed in. The Pair service is hosted by your operator or on your own infrastructure; you do not need to start a Pair server on this computer.</p>
-<p>After the beta package is published (currently pending publisher authentication):</p><pre>npm install -g @ai-cdl/pair-cli@beta</pre>
+<p>Install the beta adapter:</p><pre>npm install -g @ai-cdl/pair-cli@beta</pre>
 <details><summary>Alternative: install from a trusted checkout</summary><p>Requires pnpm. Run from the repository root:</p><pre>pnpm install --frozen-lockfile
 pnpm bridge:build
 pnpm --filter @ai-cdl/protocol --filter @ai-cdl/pair-cli build</pre><p>Use <code>pnpm agent</code> instead of <code>ai-cdl-pair-agent</code> below. Use the beta tag explicitly when installing from npm.</p></details>

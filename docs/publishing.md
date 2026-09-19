@@ -2,7 +2,8 @@
 
 The Excel add-in and npm libraries are separate artifacts. The source repository is
 [ai-cdl-pair](https://github.com/lucamattiazzi/ai-cdl-pair). The first independent release is
-`0.2.0-beta.0` on the npm `beta` channel; check registry availability when executing the release.
+`0.2.0-beta.0`, published on 2026-09-19 to the npm `beta` channel. Existing stable `latest` tags
+remain at `0.1.1`. Verify registry availability after each release before announcing installation.
 Microsoft Marketplace submission and production hosting are separate steps.
 
 ## Libraries
@@ -30,11 +31,15 @@ pnpm smoke:consumer
 
 Review the generated version changes and release notes. Changesets groups the ten libraries into
 one fixed release set. Run `pnpm release:beta` when ready to publish a beta release. This sets the `beta` tag explicitly
-for every package, including packages with no previous npm release; Changesets prerelease
-publishing would otherwise put those new packages on `latest`. Complete npm two-factor
+for every package and preserves existing stable `latest` tags. For first-ever package
+publications, npm also initializes `latest` to that first version; installation instructions
+use `@beta` explicitly. Changesets prerelease mode does not accept an additional `--tag` option. Complete npm two-factor
 authentication in your terminal when prompted. To inspect the upload without publishing, run
 `pnpm release:beta --dry-run`.
-There is deliberately no workflow that publishes on push.
+There is deliberately no workflow that publishes on push. npm may accept an upload before its
+publish-time scan makes the version installable. Wait for every package and dependency to appear
+in the registry, then verify an installation in a clean directory. Do not republish or bump versions
+merely because an accepted upload is not immediately visible.
 
 To inspect a single package without publishing:
 

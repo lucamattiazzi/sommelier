@@ -2,11 +2,16 @@
 
 The requested v1 features are implemented in this checkout. This is **not yet a verified
 AppSource release**: real Excel validation, interactive Claude channel validation, the OpenCode
-provider configuration and publication ownership/hosting still need attention.
+provider configuration and production hosting still need attention.
 
-Publication preparation (2026-09-15): repository and npm metadata now target
-`lucamattiazzi/ai-cdl-pair`; packages are versioned `0.2.0-beta.0`. The verification evidence and
+Publication update (2026-09-19): [GitHub](https://github.com/lucamattiazzi/ai-cdl-pair) is public
+and all ten npm packages have been published as `0.2.0-beta.0` on `beta`. The verification evidence and
 remaining runtime checks below are from 2026-09-11 and do not imply Marketplace certification.
+
+Release verification on 2026-09-19: all ten public registry versions and beta tags were checked.
+A clean installation of the adapter alone passed binary startup, isolated profile listing,
+bundled skill/crypto assets and ESM/CommonJS imports; installation of all ten published packages
+also passed. The existing stable `latest` tags remain at `0.1.1`.
 
 ## Feature inventory
 
@@ -22,7 +27,7 @@ remaining runtime checks below are from 2026-09-11 and do not imply Marketplace 
 | Evals / traces | Public `subscribeBridge`; metadata-first JSONL CLI, opt-in full payloads | Independent subscribers, RPC outcome/duration, chat routing IDs; no provider reasoning/token traces |
 | Relay confidentiality | Existing authenticated E2EE channel, preserved through local MCP | Encrypted round trip, plaintext/takeover rejection, no key in traces |
 
-## Checks completed
+## Checks completed on 2026-09-11 (before publication)
 
 - Initial focused Vitest: **42 tests passed**, plus one opt-in native smoke skipped in normal runs.
 - Hosting refinement: **14 focused tests passed**, including automatic OpenCode startup, private API
