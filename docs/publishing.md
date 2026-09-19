@@ -2,7 +2,7 @@
 
 The Excel add-in and npm libraries are separate artifacts. The source repository is
 [sommelier](https://github.com/lucamattiazzi/sommelier). The first release under the Sommelier name is
-`0.2.0-beta.1`. The previous `0.2.0-beta.0` release used the `@ai-cdl/*` namespace.
+`0.2.0-beta.1`, published to npm on 2026-09-20 (Europe/Rome). The previous `0.2.0-beta.0` release used the `@ai-cdl/*` namespace.
 The new packages use the personal `@lucamattiazzi` scope; install with `@beta` explicitly.
 Verify registry availability after each release before announcing installation.
 Microsoft Marketplace submission and production hosting are separate steps.

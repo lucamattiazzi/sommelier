@@ -13,8 +13,16 @@ A clean installation of the adapter alone passed binary startup, isolated profil
 bundled skill/crypto assets and ESM/CommonJS imports; installation of all ten published packages
 also passed. The existing stable `latest` tags remain at `0.1.1`.
 
-Sommelier renames the public packages for `0.2.0-beta.1`; see [migration](migration-to-sommelier.md).
-The historical verification below concerns the original release.
+Sommelier publication (2026-09-20, Europe/Rome): all ten renamed packages were accepted by npm
+as `0.2.0-beta.1`; see [migration](migration-to-sommelier.md). All ten public registry versions
+and `beta` tags were checked. Fresh npm installations of the adapter alone and all ten packages
+passed binary startup, isolated profile listing, bundled skill/crypto assets and ESM/CommonJS
+imports. Neither installation pulled packages from the former `@ai-cdl` namespace.
+[CI on the rename commit](https://github.com/lucamattiazzi/sommelier/actions/runs/35472196699)
+passed lint, type checks, builds, manifest consistency, ten-package consumer smoke, skill installers,
+and **103 tests** (one opt-in native test skipped). The browser preview also passed pairing,
+encrypted write/chart approval and remembered reconnect at 320 px. The detailed historical
+runtime verification below still concerns the original release.
 
 ## Feature inventory
 
