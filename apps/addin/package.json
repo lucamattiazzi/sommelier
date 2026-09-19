@@ -1,0 +1,35 @@
+{
+  "name": "@lucamattiazzi/sommelier-addin",
+  "version": "0.1.2-beta.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host localhost --port 3000",
+    "build": "tsc --noEmit && vite build",
+    "manifest:development": "INIT_CWD=. node ../../packages/config/dist/cli.js manifest generate --environment development --output manifest.xml",
+    "manifest:production": "INIT_CWD=. node ../../packages/config/dist/cli.js manifest generate --environment production --output manifest.xml",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "manifest:check": "INIT_CWD=. node ../../packages/config/dist/cli.js manifest generate --environment development --output manifest.xml --check"
+  },
+  "dependencies": {
+    "@lucamattiazzi/sommelier-addin-core": "workspace:^",
+    "@lucamattiazzi/sommelier-agent-http": "workspace:^",
+    "@lucamattiazzi/sommelier-core": "workspace:^",
+    "@lucamattiazzi/sommelier-excel": "workspace:^",
+    "@lucamattiazzi/sommelier-client": "workspace:^",
+    "@lucamattiazzi/sommelier-testing": "workspace:^",
+    "@lucamattiazzi/sommelier-transport": "workspace:^",
+    "office-addin-dev-certs": "2.0.10",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@lucamattiazzi/sommelier-config": "workspace:^",
+    "@types/office-js": "1.0.547",
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
+    "@vitejs/plugin-react": "5.0.2",
+    "vite": "7.3.6"
+  }
+}

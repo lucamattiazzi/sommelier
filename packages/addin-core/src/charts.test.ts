@@ -1,5 +1,5 @@
-import { InMemoryExcelAdapter } from "@ai-cdl/excel";
-import { PROTOCOL_VERSION, type ProtocolRequest } from "@ai-cdl/protocol";
+import { InMemoryExcelAdapter } from "@lucamattiazzi/sommelier-excel";
+import { PROTOCOL_VERSION, type ProtocolRequest } from "@lucamattiazzi/sommelier-protocol";
 import { describe, expect, it, vi } from "vitest";
 import { createAddinController } from "./index.js";
 

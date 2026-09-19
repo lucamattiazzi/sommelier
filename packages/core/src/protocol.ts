@@ -41,7 +41,7 @@ export interface ToolResultMessage {
   readonly toolCallId: string;
   readonly status: "success" | "rejected" | "error";
   readonly result?: JsonValue;
-  readonly error?: SerializedAiCdlError;
+  readonly error?: SerializedSommelierError;
 }
 
 /** Input supplied to an adapter for one agent iteration. */
@@ -87,7 +87,7 @@ export interface AgentAdapter {
 }
 
 /** Safe, JSON-serializable public error representation. */
-export interface SerializedAiCdlError {
+export interface SerializedSommelierError {
   readonly code: string;
   readonly message: string;
   readonly context: Readonly<Record<string, JsonValue>>;

@@ -1,24 +1,27 @@
-# Pair v1 readiness — 2026-09-11
+# Sommelier v1 readiness — 2026-09-11
 
 The requested v1 features are implemented in this checkout. This is **not yet a verified
 AppSource release**: real Excel validation, interactive Claude channel validation, the OpenCode
 provider configuration and production hosting still need attention.
 
-Publication update (2026-09-19): [GitHub](https://github.com/lucamattiazzi/ai-cdl-pair) is public
-and all ten npm packages have been published as `0.2.0-beta.0` on `beta`. The verification evidence and
+Publication update (2026-09-19): [GitHub](https://github.com/lucamattiazzi/sommelier) is public
+and all ten original `@ai-cdl/*` npm packages were published as `0.2.0-beta.0` on `beta`. The verification evidence and
 remaining runtime checks below are from 2026-09-11 and do not imply Marketplace certification.
 
-Release verification on 2026-09-19: all ten public registry versions and beta tags were checked.
+Original-name release verification on 2026-09-19: all ten public registry versions and beta tags were checked.
 A clean installation of the adapter alone passed binary startup, isolated profile listing,
 bundled skill/crypto assets and ESM/CommonJS imports; installation of all ten published packages
 also passed. The existing stable `latest` tags remain at `0.1.1`.
+
+Sommelier renames the public packages for `0.2.0-beta.1`; see [migration](migration-to-sommelier.md).
+The historical verification below concerns the original release.
 
 ## Feature inventory
 
 | Requirement | Implementation | Verification / limit |
 | --- | --- | --- |
 | Agent ↔ TaskPane | Codex App Server, OpenCode HTTP adapter, Claude MCP channel | Real Codex tool call + thread resume; real OpenCode MCP discovery; real stdio channel contract |
-| Hosted and self-hosted service | Operator configures `PAIR_DOMAIN`; pairing remembers the chosen instance | End users launch only the adapter; no fixed public service domain |
+| Hosted and self-hosted service | Operator configures `SOMMELIER_DOMAIN`; pairing remembers the chosen instance | End users launch only the adapter; no fixed public service domain |
 | Reads and writes | Shared MCP tools generated from RPC descriptors | Encrypted integration with synthetic workbook, preview/approval/readback |
 | Charts | List and create column/bar/line/pie/scatter from a bounded source | Controller approval, duplicate name protection, Office.js mock and browser approval; no chart undo |
 | Excel guidance | `excel_guide`, `pair://docs/excel`, portable skill and RPC reference | MCP discovery/calls and installed skill smoke |
@@ -57,15 +60,15 @@ Reproduce from the repository root:
 ```sh
 pnpm install --frozen-lockfile
 pnpm build
-pnpm exec vitest run packages/protocol/src packages/addin-core/src packages/excel/src/office-adapter.test.ts packages/pair-cli/src apps/pair-addin/src/terminals.test.ts apps/pair-server/src/encrypted.test.ts
+pnpm exec vitest run packages/protocol/src packages/addin-core/src packages/excel/src/office-adapter.test.ts packages/bridge/src apps/addin/src/terminals.test.ts apps/server/src/encrypted.test.ts
 pnpm test:browser
 pnpm test:harness
 pnpm manifest:check
 pnpm smoke:consumer
 # Starts installed harnesses; creates/archives a synthetic Codex thread, no model call:
-PAIR_NATIVE_SMOKE=1 pnpm exec vitest run packages/pair-cli/src/native-smoke.test.ts
+PAIR_NATIVE_SMOKE=1 pnpm exec vitest run packages/bridge/src/native-smoke.test.ts
 # Also makes a real model call with the user's configured Codex account:
-PAIR_NATIVE_SMOKE=1 PAIR_NATIVE_TURN=codex pnpm exec vitest run packages/pair-cli/src/native-smoke.test.ts
+PAIR_NATIVE_SMOKE=1 PAIR_NATIVE_TURN=codex pnpm exec vitest run packages/bridge/src/native-smoke.test.ts
 ```
 
 `PAIR_NATIVE_TURN=opencode` tests its model; `1` tests both. These are deliberately opt-in and are
@@ -82,7 +85,7 @@ are generated under ignored `artifacts/pair-review/`; they show synthetic data, 
    Start Claude through the launcher, accept channel consent and verify a round trip. Keep Claude
    marked preview: custom Channels still require the development flag and may be blocked by policy.
 3. **Set publication identity and hosting.** GitHub and npm ownership have been established. Configure the operator's
-   HTTPS domain through `PAIR_DOMAIN` (see [self-hosting](../deploy/pair/README.md)),
+   HTTPS domain through `SOMMELIER_DOMAIN` (see [self-hosting](../deploy/sommelier/README.md)),
    and verify the production deployment. No Marketplace submission or hosting deployment is
    established by the beta package release.
 4. **Finish Marketplace material.** Publisher/support/legal details and genuine Excel screenshots

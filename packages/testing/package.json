@@ -1,11 +1,11 @@
 {
-  "name": "@ai-cdl/testing",
-  "version": "0.2.0-beta.0",
-  "description": "Virtual workbook, scripted agents, traces, and adapter contract kit for AI-CDL",
+  "name": "@lucamattiazzi/sommelier-testing",
+  "version": "0.2.0-beta.1",
+  "description": "Virtual workbook, scripted agents, traces, and adapter contract kit for Sommelier",
   "license": "Apache-2.0",
   "type": "module",
   "bin": {
-    "ai-cdl-contract": "./dist/contract-cli.js"
+    "sommelier-contract": "./dist/contract-cli.js"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -26,25 +26,25 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --external @ai-cdl/core --external @ai-cdl/excel && tsup src/contract-cli.ts --format esm --dts --sourcemap --external @ai-cdl/core --external @ai-cdl/agent-http",
+    "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --external @lucamattiazzi/sommelier-core --external @lucamattiazzi/sommelier-excel && tsup src/contract-cli.ts --format esm --dts --sourcemap --external @lucamattiazzi/sommelier-core --external @lucamattiazzi/sommelier-agent-http",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "ai-cdl-contract": "tsx src/contract-cli.ts"
+    "sommelier-contract": "tsx src/contract-cli.ts"
   },
   "dependencies": {
-    "@ai-cdl/agent-http": "workspace:^",
-    "@ai-cdl/core": "workspace:^",
-    "@ai-cdl/excel": "workspace:^",
+    "@lucamattiazzi/sommelier-agent-http": "workspace:^",
+    "@lucamattiazzi/sommelier-core": "workspace:^",
+    "@lucamattiazzi/sommelier-excel": "workspace:^",
     "commander": "15.0.0",
     "zod": "4.1.5"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair.git",
+    "url": "https://github.com/lucamattiazzi/sommelier.git",
     "directory": "packages/testing"
   },
-  "homepage": "https://github.com/lucamattiazzi/ai-cdl-pair#readme",
+  "homepage": "https://github.com/lucamattiazzi/sommelier#readme",
   "bugs": {
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair/issues"
+    "url": "https://github.com/lucamattiazzi/sommelier/issues"
   }
 }

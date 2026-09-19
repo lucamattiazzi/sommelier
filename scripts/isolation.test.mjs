@@ -8,12 +8,12 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 const json = (path) => JSON.parse(readFileSync(resolve(root, path), "utf8"));
 
 test("Pair is an independent workspace with all local dependencies", () => {
-  assert.equal(json("package.json").name, "ai-cdl-pair");
+  assert.equal(json("package.json").name, "sommelier");
   const manifests = ["apps", "packages"].flatMap((group) =>
     readdirSync(resolve(root, group)).map((name) => json(`${group}/${name}/package.json`)),
   );
   const names = new Set(manifests.map((manifest) => manifest.name));
-  assert.ok(!names.has("@ai-cdl/enterprise"));
+  assert.ok(!names.has("@lucamattiazzi/sommelier-enterprise"));
   for (const manifest of manifests) {
     for (const [name, version] of Object.entries({
       ...manifest.dependencies,
@@ -31,10 +31,10 @@ test("Pair is an independent workspace with all local dependencies", () => {
 
 test("the add-in owns its icons and does not require the old examples", () => {
   for (const name of ["icon.png", "icon.svg"]) {
-    assert.ok(existsSync(resolve(root, "apps/pair-addin/public", name)), name);
+    assert.ok(existsSync(resolve(root, "apps/addin/public", name)), name);
   }
-  for (const name of ["vite.config.ts", "ai-cdl.config.ts"]) {
-    const source = readFileSync(resolve(root, "apps/pair-addin", name), "utf8");
+  for (const name of ["vite.config.ts", "sommelier.config.ts"]) {
+    const source = readFileSync(resolve(root, "apps/addin", name), "utf8");
     assert.ok(!source.includes("../../examples/"), name);
   }
 });

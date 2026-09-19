@@ -1,5 +1,5 @@
 {
-  "name": "ai-cdl-pair",
+  "name": "sommelier",
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@11.21.0",
@@ -13,13 +13,13 @@
     "test": "node --test scripts/isolation.test.mjs && vitest run --coverage",
     "test:unit": "vitest run",
     "test:isolation": "node --test scripts/isolation.test.mjs",
-    "pair:test": "vitest run packages/addin-core packages/pair packages/pair-cli packages/protocol packages/transport packages/excel apps/pair-addin apps/pair-server",
-    "pair:addin:dev": "pnpm --filter @ai-cdl/pair-addin dev",
-    "pair:server:dev": "pnpm bridge:build && pnpm --filter @ai-cdl/pair-server dev",
-    "pair:build": "pnpm bridge:build && pnpm --filter @ai-cdl/pair-addin... --filter @ai-cdl/pair-server... build",
-    "manifest:generate": "pnpm --filter @ai-cdl/pair-addin manifest:development",
-    "manifest:production": "pnpm --filter @ai-cdl/pair-addin manifest:production",
-    "manifest:check": "pnpm --filter @ai-cdl/pair-addin manifest:check",
+    "test:pairing": "vitest run packages/addin-core packages/client packages/bridge packages/protocol packages/transport packages/excel apps/addin apps/server",
+    "addin:dev": "pnpm --filter @lucamattiazzi/sommelier-addin dev",
+    "server:dev": "pnpm bridge:build && pnpm --filter @lucamattiazzi/sommelier-server dev",
+    "sommelier:build": "pnpm bridge:build && pnpm --filter @lucamattiazzi/sommelier-addin... --filter @lucamattiazzi/sommelier-server... build",
+    "manifest:generate": "pnpm --filter @lucamattiazzi/sommelier-addin manifest:development",
+    "manifest:production": "pnpm --filter @lucamattiazzi/sommelier-addin manifest:production",
+    "manifest:check": "pnpm --filter @lucamattiazzi/sommelier-addin manifest:check",
     "smoke:packages": "node scripts/package-smoke.mjs",
     "smoke:consumer": "node scripts/external-consumer-smoke.mjs",
     "changeset": "changeset",
@@ -27,7 +27,7 @@
     "harness:install": "node scripts/install-harness.mjs",
     "test:harness": "node --test scripts/install-harness.test.mjs",
     "test:browser": "node --test scripts/pair-browser.test.mjs",
-    "agent": "node packages/pair-cli/dist/agent.js",
+    "agent": "node packages/bridge/dist/agent.js",
     "release:beta": "pnpm -r --filter \"./packages/**\" publish --tag beta --access public --publish-branch main"
   },
   "devDependencies": {
@@ -45,10 +45,10 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair.git"
+    "url": "https://github.com/lucamattiazzi/sommelier.git"
   },
-  "homepage": "https://github.com/lucamattiazzi/ai-cdl-pair#readme",
+  "homepage": "https://github.com/lucamattiazzi/sommelier#readme",
   "bugs": {
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair/issues"
+    "url": "https://github.com/lucamattiazzi/sommelier/issues"
   }
 }

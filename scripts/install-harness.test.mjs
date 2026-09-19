@@ -15,11 +15,11 @@ test("installs self-contained skills in each harness's discoverable directory", 
       pi: ".pi/agent/skills",
     })) {
       execFileSync(process.execPath, ["scripts/install-harness.mjs", harness, "--home", home]);
-      const installed = join(home, directory, "ai-cdl-pair");
-      assert.match(readFileSync(join(installed, "SKILL.md"), "utf8"), /name: ai-cdl-pair/);
+      const installed = join(home, directory, "sommelier");
+      assert.match(readFileSync(join(installed, "SKILL.md"), "utf8"), /name: sommelier/);
       const result = JSON.parse(
         execFileSync(process.execPath, [join(installed, "scripts/session.mjs"), "list"], {
-          env: { ...process.env, AI_CDL_PAIR_HOME: join(home, "profiles") },
+          env: { ...process.env, SOMMELIER_HOME: join(home, "profiles") },
           encoding: "utf8",
         }),
       );

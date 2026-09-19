@@ -7,9 +7,9 @@ Write a focused failing test before changing non-trivial behavior, implement the
 and run checks scoped to the affected files or package. For example:
 
 ```sh
-pnpm exec vitest run packages/pair/src/lifecycle.test.ts
-pnpm --filter @ai-cdl/pair typecheck
-pnpm exec biome check packages/pair/src/index.ts
+pnpm exec vitest run packages/client/src/lifecycle.test.ts
+pnpm --filter @lucamattiazzi/sommelier-client typecheck
+pnpm exec biome check packages/client/src/index.ts
 ```
 
 Keep test workbooks synthetic. Never commit pairing URLs, credentials, private workbook contents,

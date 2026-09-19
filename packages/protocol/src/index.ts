@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-/** Current AI-CDL vNext wire protocol version. */
+/** Current Sommelier vNext wire protocol version. */
 export const PROTOCOL_VERSION = "0.2" as const;
 
 /** A value that can cross a JSON protocol boundary. */

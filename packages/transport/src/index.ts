@@ -1,4 +1,4 @@
-import { type ProtocolMessage, parseProtocolMessage } from "@ai-cdl/protocol";
+import { type ProtocolMessage, parseProtocolMessage } from "@lucamattiazzi/sommelier-protocol";
 
 /** Lifecycle state shared by all transports. */
 export type TransportState = "disconnected" | "connecting" | "connected" | "closing";

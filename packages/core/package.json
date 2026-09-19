@@ -1,7 +1,7 @@
 {
-  "name": "@ai-cdl/core",
-  "version": "0.2.0-beta.0",
-  "description": "Headless agent session, policy, protocol, and tracing primitives for AI-CDL",
+  "name": "@lucamattiazzi/sommelier-core",
+  "version": "0.2.0-beta.1",
+  "description": "Headless agent session, policy, protocol, and tracing primitives for Sommelier",
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -32,11 +32,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair.git",
+    "url": "https://github.com/lucamattiazzi/sommelier.git",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/lucamattiazzi/ai-cdl-pair#readme",
+  "homepage": "https://github.com/lucamattiazzi/sommelier#readme",
   "bugs": {
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair/issues"
+    "url": "https://github.com/lucamattiazzi/sommelier/issues"
   }
 }

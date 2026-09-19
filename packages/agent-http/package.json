@@ -1,7 +1,7 @@
 {
-  "name": "@ai-cdl/agent-http",
-  "version": "0.2.0-beta.0",
-  "description": "Vendor-neutral JSON HTTP agent adapter for AI-CDL",
+  "name": "@lucamattiazzi/sommelier-agent-http",
+  "version": "0.2.0-beta.1",
+  "description": "Vendor-neutral JSON HTTP agent adapter for Sommelier",
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -23,21 +23,21 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --external @ai-cdl/core",
+    "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --external @lucamattiazzi/sommelier-core",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
-    "@ai-cdl/core": "workspace:^",
+    "@lucamattiazzi/sommelier-core": "workspace:^",
     "zod": "4.1.5"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair.git",
+    "url": "https://github.com/lucamattiazzi/sommelier.git",
     "directory": "packages/agent-http"
   },
-  "homepage": "https://github.com/lucamattiazzi/ai-cdl-pair#readme",
+  "homepage": "https://github.com/lucamattiazzi/sommelier#readme",
   "bugs": {
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair/issues"
+    "url": "https://github.com/lucamattiazzi/sommelier/issues"
   }
 }

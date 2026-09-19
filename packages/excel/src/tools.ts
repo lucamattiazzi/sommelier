@@ -1,4 +1,9 @@
-import { AiCdlError, defineTool, type JsonValue, type ToolDefinition } from "@ai-cdl/core";
+import {
+  defineTool,
+  type JsonValue,
+  SommelierError,
+  type ToolDefinition,
+} from "@lucamattiazzi/sommelier-core";
 import { z } from "zod";
 import type { CellValue, ExcelToolResultBase, RangeFormat, WorkbookDriver } from "./driver.js";
 import { assertMatrixShape, parseA1Range } from "./range.js";
@@ -60,8 +65,8 @@ function base(
 
 function enforce(count: number, maximum: number, operation: string): void {
   if (count > maximum) {
-    throw new AiCdlError({
-      code: "AI_CDL_EXCEL_CELL_LIMIT_EXCEEDED",
+    throw new SommelierError({
+      code: "SOMMELIER_EXCEL_CELL_LIMIT_EXCEEDED",
       message: `${operation} targets ${count} cells; the configured limit is ${maximum}.`,
       context: { cellCount: count, limit: maximum, operation },
       suggestedAction: "Request a smaller explicit range or deliberately raise the host limit.",
@@ -72,8 +77,8 @@ function enforce(count: number, maximum: number, operation: string): void {
 function boundedResult(result: ExcelToolResultBase, maximum: number): ExcelToolResultBase {
   const bytes = new TextEncoder().encode(JSON.stringify(result)).byteLength;
   if (bytes <= maximum) return result;
-  throw new AiCdlError({
-    code: "AI_CDL_EXCEL_BYTE_LIMIT_EXCEEDED",
+  throw new SommelierError({
+    code: "SOMMELIER_EXCEL_BYTE_LIMIT_EXCEEDED",
     message: `The workbook result is ${bytes} bytes; the configured limit is ${maximum}.`,
     context: { bytes, limit: maximum },
     suggestedAction: "Read a smaller range or table subset.",
@@ -315,14 +320,14 @@ export function createExcelTools(options: CreateExcelToolsOptions): readonly Too
       execute: async (input, context) => {
         const parsed = parseA1Range(input.cell);
         if (parsed.cellCount !== 1)
-          throw new AiCdlError({
-            code: "AI_CDL_EXCEL_SINGLE_CELL_REQUIRED",
+          throw new SommelierError({
+            code: "SOMMELIER_EXCEL_SINGLE_CELL_REQUIRED",
             message: "Comments target exactly one cell.",
           });
         const capabilities = await driver.getCapabilities(context.signal);
         if (!capabilities.comments)
-          throw new AiCdlError({
-            code: "AI_CDL_EXCEL_CAPABILITY_UNSUPPORTED",
+          throw new SommelierError({
+            code: "SOMMELIER_EXCEL_CAPABILITY_UNSUPPORTED",
             message: "Comments are not supported by this Excel host.",
             suggestedAction: "Check the host requirement set or disable excel.add_comment.",
           });

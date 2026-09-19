@@ -1,4 +1,4 @@
-import { createExcelTools } from "@ai-cdl/excel";
+import { createExcelTools } from "@lucamattiazzi/sommelier-excel";
 import { describe, expect, it } from "vitest";
 import { VirtualWorkbookDriver } from "./virtual-workbook.js";
 

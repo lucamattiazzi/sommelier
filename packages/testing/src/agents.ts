@@ -1,4 +1,4 @@
-import type { AgentAdapter, AgentEvent, AgentTurnRequest } from "@ai-cdl/core";
+import type { AgentAdapter, AgentEvent, AgentTurnRequest } from "@lucamattiazzi/sommelier-core";
 
 /** Function producing deterministic adapter events from a turn request. */
 export type AgentScript = (

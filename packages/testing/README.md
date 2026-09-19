@@ -1,12 +1,12 @@
-# @ai-cdl/testing
+# @lucamattiazzi/sommelier-testing
 
 Synthetic virtual workbook, scripted agents, trace collector, assertions, and reusable adapter
-contract tests for AI-CDL integrations.
+contract tests for Sommelier integrations.
 
 The endpoint CLI accepts a configurable per-case timeout:
 
 ```bash
-ai-cdl-contract --endpoint https://agent.example.com/turns --timeout-ms 60000
+sommelier-contract --endpoint https://agent.example.com/turns --timeout-ms 60000
 ```
 
 Continuation cases first read the endpoint's emitted `tool_call.id` and echo that exact ID in the

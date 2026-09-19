@@ -1,22 +1,22 @@
-import type { JsonValue, SerializedAiCdlError } from "./protocol.js";
+import type { JsonValue, SerializedSommelierError } from "./protocol.js";
 
-/** Stable AI-CDL error codes. */
-export type AiCdlErrorCode =
-  | "AI_CDL_ACTIVE_TURN"
-  | "AI_CDL_AGENT_PROTOCOL_INVALID"
-  | "AI_CDL_APPROVAL_NOT_FOUND"
-  | "AI_CDL_BUDGET_EXCEEDED"
-  | "AI_CDL_CANCELLED"
-  | "AI_CDL_INVALID_STATE_TRANSITION"
-  | "AI_CDL_POLICY_DENIED"
-  | "AI_CDL_TIMEOUT"
-  | "AI_CDL_TOOL_ARGUMENTS_INVALID"
-  | "AI_CDL_TOOL_EXECUTION_FAILED"
-  | "AI_CDL_TOOL_NOT_FOUND";
+/** Stable Sommelier error codes. */
+export type SommelierErrorCode =
+  | "SOMMELIER_ACTIVE_TURN"
+  | "SOMMELIER_AGENT_PROTOCOL_INVALID"
+  | "SOMMELIER_APPROVAL_NOT_FOUND"
+  | "SOMMELIER_BUDGET_EXCEEDED"
+  | "SOMMELIER_CANCELLED"
+  | "SOMMELIER_INVALID_STATE_TRANSITION"
+  | "SOMMELIER_POLICY_DENIED"
+  | "SOMMELIER_TIMEOUT"
+  | "SOMMELIER_TOOL_ARGUMENTS_INVALID"
+  | "SOMMELIER_TOOL_EXECUTION_FAILED"
+  | "SOMMELIER_TOOL_NOT_FOUND";
 
 /** Options for a structured, safe public error. */
-export interface AiCdlErrorOptions {
-  readonly code: AiCdlErrorCode | (string & {});
+export interface SommelierErrorOptions {
+  readonly code: SommelierErrorCode | (string & {});
   readonly message: string;
   readonly context?: Readonly<Record<string, JsonValue>>;
   readonly probableCause?: string;
@@ -26,16 +26,16 @@ export interface AiCdlErrorOptions {
 }
 
 /** Base error carrying a stable code and remediation fields. */
-export class AiCdlError extends Error {
+export class SommelierError extends Error {
   readonly code: string;
   readonly context: Readonly<Record<string, JsonValue>>;
   readonly probableCause: string | undefined;
   readonly suggestedAction: string | undefined;
   readonly documentationUrl: string | undefined;
 
-  constructor(options: AiCdlErrorOptions) {
+  constructor(options: SommelierErrorOptions) {
     super(options.message, { cause: options.cause });
-    this.name = "AiCdlError";
+    this.name = "SommelierError";
     this.code = options.code;
     this.context = options.context ?? {};
     this.probableCause = options.probableCause;
@@ -44,7 +44,7 @@ export class AiCdlError extends Error {
   }
 
   /** Return a JSON-safe form that deliberately omits the cause chain. */
-  toJSON(): SerializedAiCdlError {
+  toJSON(): SerializedSommelierError {
     return {
       code: this.code,
       message: this.message,
@@ -57,14 +57,14 @@ export class AiCdlError extends Error {
 }
 
 /** Convert an unknown failure into a safe structured error. */
-export function asAiCdlError(
+export function asSommelierError(
   error: unknown,
-  fallbackCode = "AI_CDL_TOOL_EXECUTION_FAILED",
-): AiCdlError {
-  if (error instanceof AiCdlError) return error;
-  return new AiCdlError({
+  fallbackCode = "SOMMELIER_TOOL_EXECUTION_FAILED",
+): SommelierError {
+  if (error instanceof SommelierError) return error;
+  return new SommelierError({
     code: fallbackCode,
-    message: error instanceof Error ? error.message : "An unknown AI-CDL error occurred.",
+    message: error instanceof Error ? error.message : "An unknown Sommelier error occurred.",
     suggestedAction: "Inspect the associated trace event and retry the operation.",
     cause: error,
   });

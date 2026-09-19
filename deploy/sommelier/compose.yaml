@@ -1,0 +1,36 @@
+services:
+  sommelier:
+    build:
+      context: ../..
+      dockerfile: deploy/sommelier/Dockerfile
+      args:
+        SOMMELIER_PUBLIC_ORIGIN: https://${SOMMELIER_DOMAIN}
+    restart: unless-stopped
+    environment:
+      SOMMELIER_PUBLIC_ORIGIN: https://${SOMMELIER_DOMAIN}
+    expose:
+      - "3000"
+    security_opt:
+      - no-new-privileges:true
+
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    depends_on:
+      - sommelier
+    environment:
+      SOMMELIER_DOMAIN: ${SOMMELIER_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  caddy_data:
+  caddy_config:

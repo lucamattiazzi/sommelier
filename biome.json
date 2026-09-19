@@ -8,7 +8,7 @@
       "!!coverage",
       "!!artifacts",
       "!!pnpm-lock.yaml",
-      "!!skills/ai-cdl-pair/scripts/lib"
+      "!!skills/sommelier/scripts/lib"
     ]
   },
   "formatter": {

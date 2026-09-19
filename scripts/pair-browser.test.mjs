@@ -8,7 +8,7 @@ import { join, resolve } from "node:path";
 import { test } from "node:test";
 import { promisify } from "node:util";
 import { chromium, expect } from "@playwright/test";
-import { createPairServer } from "../apps/pair-server/dist/index.cjs";
+import { createPairServer } from "../apps/server/dist/index.cjs";
 
 const run = promisify(execFile);
 test(
@@ -24,16 +24,16 @@ test(
     const server = await createPairServer({
       port,
       publicOrigin: origin,
-      staticDirectory: resolve("apps/pair-addin/dist"),
+      staticDirectory: resolve("apps/addin/dist"),
     });
     const browser = await chromium.launch();
     const profile = await mkdtemp(join(tmpdir(), "pair-browser-"));
-    const environment = { ...process.env, AI_CDL_PAIR_HOME: profile };
-    delete environment.AI_CDL_PAIR_URL;
-    delete environment.AI_CDL_PAIR_SESSION;
+    const environment = { ...process.env, SOMMELIER_HOME: profile };
+    delete environment.SOMMELIER_URL;
+    delete environment.SOMMELIER_SESSION;
     const bridge = (args, url) =>
-      run(process.execPath, ["skills/ai-cdl-pair/scripts/session.mjs", ...args], {
-        env: { ...environment, ...(url ? { AI_CDL_PAIR_URL: url } : {}) },
+      run(process.execPath, ["skills/sommelier/scripts/session.mjs", ...args], {
+        env: { ...environment, ...(url ? { SOMMELIER_URL: url } : {}) },
       }).then(({ stdout }) => JSON.parse(stdout));
     const rpc = (method, params) =>
       bridge(["request", "--name", "desk", "--method", method, "--params", JSON.stringify(params)]);

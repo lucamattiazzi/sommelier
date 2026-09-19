@@ -4,17 +4,17 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   resolve: {
     alias: {
-      "@ai-cdl/protocol": resolve("packages/protocol/src/index.ts"),
-      "@ai-cdl/transport": resolve("packages/transport/src/index.ts"),
-      "@ai-cdl/core": resolve("packages/core/src/index.ts"),
-      "@ai-cdl/excel": resolve("packages/excel/src/index.ts"),
-      "@ai-cdl/addin-core": resolve("packages/addin-core/src/index.ts"),
-      "@ai-cdl/pair": resolve("packages/pair/src/index.ts"),
-      "@ai-cdl/pair-cli": resolve("packages/pair-cli/src/index.ts"),
-      "@ai-cdl/agent-http": resolve("packages/agent-http/src/index.ts"),
-      "@ai-cdl/testing": resolve("packages/testing/src/index.ts"),
-      "@ai-cdl/cli/project": resolve("packages/cli/src/project.ts"),
-      "@ai-cdl/cli/manifest": resolve("packages/cli/src/manifest.ts"),
+      "@lucamattiazzi/sommelier-protocol": resolve("packages/protocol/src/index.ts"),
+      "@lucamattiazzi/sommelier-transport": resolve("packages/transport/src/index.ts"),
+      "@lucamattiazzi/sommelier-core": resolve("packages/core/src/index.ts"),
+      "@lucamattiazzi/sommelier-excel": resolve("packages/excel/src/index.ts"),
+      "@lucamattiazzi/sommelier-addin-core": resolve("packages/addin-core/src/index.ts"),
+      "@lucamattiazzi/sommelier-client": resolve("packages/client/src/index.ts"),
+      "@lucamattiazzi/sommelier": resolve("packages/bridge/src/index.ts"),
+      "@lucamattiazzi/sommelier-agent-http": resolve("packages/agent-http/src/index.ts"),
+      "@lucamattiazzi/sommelier-testing": resolve("packages/testing/src/index.ts"),
+      "@lucamattiazzi/sommelier-config/project": resolve("packages/config/src/project.ts"),
+      "@lucamattiazzi/sommelier-config/manifest": resolve("packages/config/src/manifest.ts"),
     },
   },
   test: {

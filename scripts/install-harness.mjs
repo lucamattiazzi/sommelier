@@ -20,11 +20,11 @@ if (!Object.hasOwn(locations, harness)) {
 const homeIndex = process.argv.indexOf("--home");
 if (homeIndex >= 0 && !process.argv[homeIndex + 1]) throw new Error("--home requires a directory.");
 const home = homeIndex < 0 ? homedir() : process.argv[homeIndex + 1];
-const source = fileURLToPath(new URL("../skills/ai-cdl-pair", import.meta.url));
+const source = fileURLToPath(new URL("../skills/sommelier", import.meta.url));
 await access(join(source, "scripts/lib/encrypted-socket.mjs")).catch(() => {
   throw new Error("Build the portable bridge first: pnpm bridge:build");
 });
-const destination = join(home, locations[harness], "ai-cdl-pair");
+const destination = join(home, locations[harness], "sommelier");
 const replace = process.argv.includes("--replace");
 if (
   !replace &&

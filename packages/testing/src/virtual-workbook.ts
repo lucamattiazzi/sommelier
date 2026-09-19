@@ -1,4 +1,4 @@
-import { AiCdlError } from "@ai-cdl/core";
+import { SommelierError } from "@lucamattiazzi/sommelier-core";
 import {
   type CellValue,
   parseA1Range,
@@ -9,7 +9,7 @@ import {
   type WorkbookCapabilities,
   type WorkbookDriver,
   type WorkbookStructure,
-} from "@ai-cdl/excel";
+} from "@lucamattiazzi/sommelier-excel";
 import { z } from "zod";
 
 const cellSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
@@ -51,10 +51,10 @@ interface SheetState {
 }
 
 /** Explicit error for Excel behaviors intentionally absent from the virtual driver. */
-export class UnsupportedVirtualWorkbookOperationError extends AiCdlError {
+export class UnsupportedVirtualWorkbookOperationError extends SommelierError {
   constructor(operation: string) {
     super({
-      code: "AI_CDL_VIRTUAL_OPERATION_UNSUPPORTED",
+      code: "SOMMELIER_VIRTUAL_OPERATION_UNSUPPORTED",
       message: `The virtual workbook does not support ${operation}.`,
       context: { operation },
       suggestedAction: "Use only documented MVP tools or run an Office.js integration test.",
@@ -166,8 +166,8 @@ export class VirtualWorkbookDriver implements WorkbookDriver {
       );
       return { worksheet: sheet.name, name, range: table.range, headers, rows };
     }
-    throw new AiCdlError({
-      code: "AI_CDL_EXCEL_TABLE_NOT_FOUND",
+    throw new SommelierError({
+      code: "SOMMELIER_EXCEL_TABLE_NOT_FOUND",
       message: `Table ${name} does not exist.`,
     });
   }
@@ -215,8 +215,8 @@ export class VirtualWorkbookDriver implements WorkbookDriver {
     hasHeaders: boolean,
   ): Promise<void> {
     if ([...this.#sheets.values()].some((sheet) => sheet.tables.has(name))) {
-      throw new AiCdlError({
-        code: "AI_CDL_EXCEL_TABLE_CONFLICT",
+      throw new SommelierError({
+        code: "SOMMELIER_EXCEL_TABLE_CONFLICT",
         message: `Table ${name} already exists.`,
       });
     }
@@ -260,8 +260,8 @@ export class VirtualWorkbookDriver implements WorkbookDriver {
   #sheet(name: string): SheetState {
     const sheet = this.#sheets.get(name);
     if (!sheet)
-      throw new AiCdlError({
-        code: "AI_CDL_EXCEL_WORKSHEET_NOT_FOUND",
+      throw new SommelierError({
+        code: "SOMMELIER_EXCEL_WORKSHEET_NOT_FOUND",
         message: `Worksheet ${name} does not exist.`,
       });
     return sheet;

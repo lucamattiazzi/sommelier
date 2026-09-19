@@ -8,7 +8,7 @@ export function createEncryptedSocket(socket: JsonSocket, pairUrl: string): Json
   const role = url.searchParams.get("role");
   const context = url.searchParams.get("uid") ?? url.searchParams.get("session");
   if (!secret || !context || (role !== "addin" && role !== "agent"))
-    throw new Error("Invalid encrypted Pair URL.");
+    throw new Error("Invalid encrypted Sommelier URL.");
   const events = new EventTarget();
   const peer = role === "addin" ? "agent" : "addin";
   let channel: SecureChannel | undefined;

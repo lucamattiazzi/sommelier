@@ -6,11 +6,11 @@ const expected = [
   ["core", ".", "createAgentSession"],
   ["excel", ".", "createExcelTools"],
   ["addin-core", ".", "createAddinController"],
-  ["pair", ".", "createPairClient"],
-  ["pair-cli", ".", "createPairRelayServer"],
+  ["client", ".", "createPairClient"],
+  ["bridge", ".", "createPairRelayServer"],
   ["agent-http", ".", "HttpAgentAdapter"],
   ["testing", ".", "VirtualWorkbookDriver"],
-  ["cli", "./config", "defineConfig"],
+  ["config", "./config", "defineConfig"],
 ];
 const require = createRequire(import.meta.url);
 

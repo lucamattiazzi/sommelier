@@ -6,7 +6,7 @@ import {
   parseA1Range,
   type ReadRangeResult,
   type SheetDescription,
-} from "@ai-cdl/excel";
+} from "@lucamattiazzi/sommelier-excel";
 import {
   type AuditEvent,
   type ContextMode,
@@ -21,7 +21,7 @@ import {
   type ProtocolRequest,
   type ProtocolResponse,
   toolDescriptorRegistry,
-} from "@ai-cdl/protocol";
+} from "@lucamattiazzi/sommelier-protocol";
 
 export interface WorkbookIdentity {
   readonly id: string;
@@ -169,7 +169,11 @@ export function createAddinController(options: AddinControllerOptions): AddinCon
       range: snapshot.range,
     });
     if (stopped || generation !== checkGeneration)
-      throw new ControllerFailure("SESSION_STOPPED", "This Pair session has ended.", "rejected");
+      throw new ControllerFailure(
+        "SESSION_STOPPED",
+        "This Sommelier session has ended.",
+        "rejected",
+      );
     if (
       JSON.stringify(current.values) !== JSON.stringify(snapshot.values) ||
       JSON.stringify(current.formulas) !== JSON.stringify(snapshot.formulas)
@@ -294,7 +298,7 @@ export function createAddinController(options: AddinControllerOptions): AddinCon
     if (method === "excel.range.clear" && (params as ClearParams).applyTo !== "contents") {
       throw new ControllerFailure(
         "UNSUPPORTED_OPERATION",
-        "Pair currently supports clear(contents) only. No cells were changed.",
+        "Sommelier currently supports clear(contents) only. No cells were changed.",
       );
     }
     const target = await options.adapter.readRange({
@@ -316,7 +320,11 @@ export function createAddinController(options: AddinControllerOptions): AddinCon
 
   async function approve(request: ApprovalRequest): Promise<void> {
     if (stopped)
-      throw new ControllerFailure("SESSION_STOPPED", "This Pair session has ended.", "rejected");
+      throw new ControllerFailure(
+        "SESSION_STOPPED",
+        "This Sommelier session has ended.",
+        "rejected",
+      );
     const approvalGeneration = generation;
     if (!(await options.requestApproval?.(request))) {
       throw new ControllerFailure(
@@ -512,7 +520,7 @@ export function createAddinController(options: AddinControllerOptions): AddinCon
         if (operations.size >= maxOperations)
           throw new ControllerFailure(
             "OPERATION_LIMIT_EXCEEDED",
-            "Start a new Pair session to clear operation history.",
+            "Start a new Sommelier session to clear operation history.",
           );
         const before = await ensureValidMutation(params.method, mutationParams);
         const operation: StoredOperation = {
@@ -673,7 +681,7 @@ export function createAddinController(options: AddinControllerOptions): AddinCon
       if (stopped)
         return protocolError(
           request.id,
-          new ControllerFailure("SESSION_STOPPED", "This Pair session has ended."),
+          new ControllerFailure("SESSION_STOPPED", "This Sommelier session has ended."),
         );
       const exclusive = toolDescriptorRegistry[request.method].capability !== "observe";
       if (exclusive && actionBusy)

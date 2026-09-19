@@ -1,0 +1,67 @@
+{
+  "name": "@lucamattiazzi/sommelier-config",
+  "version": "0.2.0-beta.1",
+  "description": "Minimal typed configuration, manifest generation, and packaging CLI for Sommelier",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "sommelier-config": "./dist/cli.js"
+  },
+  "main": "./dist/config.cjs",
+  "module": "./dist/config.js",
+  "types": "./dist/config.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/config.d.ts",
+      "import": "./dist/config.js",
+      "require": "./dist/config.cjs"
+    },
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "import": "./dist/config.js",
+      "require": "./dist/config.cjs"
+    },
+    "./project": {
+      "types": "./dist/project.d.ts",
+      "import": "./dist/project.js",
+      "require": "./dist/project.cjs"
+    },
+    "./manifest": {
+      "types": "./dist/manifest.d.ts",
+      "import": "./dist/manifest.js",
+      "require": "./dist/manifest.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup src/cli.ts --format esm --dts --sourcemap --clean && tsup src/config.ts src/project.ts src/manifest.ts --format esm,cjs --dts --sourcemap",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "sommelier": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "commander": "15.0.0",
+    "jiti": "2.7.0",
+    "xmlbuilder2": "4.0.3",
+    "zod": "4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "24.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucamattiazzi/sommelier.git",
+    "directory": "packages/config"
+  },
+  "homepage": "https://github.com/lucamattiazzi/sommelier#readme",
+  "bugs": {
+    "url": "https://github.com/lucamattiazzi/sommelier/issues"
+  }
+}

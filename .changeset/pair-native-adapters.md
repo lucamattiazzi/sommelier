@@ -1,8 +1,8 @@
 ---
-"@ai-cdl/protocol": minor
-"@ai-cdl/excel": minor
-"@ai-cdl/addin-core": minor
-"@ai-cdl/pair-cli": minor
+"@lucamattiazzi/sommelier-protocol": minor
+"@lucamattiazzi/sommelier-excel": minor
+"@lucamattiazzi/sommelier-addin-core": minor
+"@lucamattiazzi/sommelier": minor
 ---
 
 Add native Codex, OpenCode and Claude Code channel adapters with remembered conversation bindings,

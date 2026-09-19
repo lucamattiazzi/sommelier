@@ -13,7 +13,7 @@ import { basename, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
-const temporaryRoot = mkdtempSync(join(tmpdir(), "ai-cdl-consumer-"));
+const temporaryRoot = mkdtempSync(join(tmpdir(), "sommelier-consumer-"));
 const tarballDirectory = join(temporaryRoot, "tarballs");
 mkdirSync(tarballDirectory);
 
@@ -52,10 +52,10 @@ const minimalDirectory = join(temporaryRoot, "minimal-cli-consumer");
 mkdirSync(minimalDirectory);
 writeFileSync(
   join(minimalDirectory, "package.json"),
-  `${JSON.stringify({ name: "ai-cdl-minimal-smoke", private: true, type: "module" }, null, 2)}\n`,
+  `${JSON.stringify({ name: "sommelier-minimal-smoke", private: true, type: "module" }, null, 2)}\n`,
 );
-const cliTarball = tarballs.find((file) => file.includes("ai-cdl-cli-"));
-if (!cliTarball) throw new Error("Missing @ai-cdl/cli tarball.");
+const cliTarball = tarballs.find((file) => file.includes("lucamattiazzi-sommelier-config-"));
+if (!cliTarball) throw new Error("Missing @lucamattiazzi/sommelier-config tarball.");
 run(
   "npm",
   ["install", "--ignore-scripts", "--no-audit", "--no-fund", cliTarball],
@@ -64,9 +64,9 @@ run(
 const minimalTree = JSON.parse(run("npm", ["ls", "--all", "--json"], minimalDirectory));
 const serializedTree = JSON.stringify(minimalTree);
 for (const forbidden of [
-  "@ai-cdl/agent-http",
-  "@ai-cdl/evals",
-  "@ai-cdl/testing",
+  "@lucamattiazzi/sommelier-agent-http",
+  "@lucamattiazzi/sommelier-evals",
+  "@lucamattiazzi/sommelier-testing",
   "office-addin-debugging",
   "office-addin-dev-certs",
   "office-addin-manifest",
@@ -85,14 +85,17 @@ const minimalDependencyCount = dependencyCount(minimalTree);
 if (minimalDependencyCount > 75) {
   throw new Error(`Minimal CLI dependency tree regressed to ${minimalDependencyCount} packages.`);
 }
-run(process.execPath, [join(minimalDirectory, "node_modules/@ai-cdl/cli/dist/cli.js"), "--help"]);
+run(process.execPath, [
+  join(minimalDirectory, "node_modules/@lucamattiazzi/sommelier-config/dist/cli.js"),
+  "--help",
+]);
 
 const singlePackageDirectory = join(temporaryRoot, "single-package-consumer");
 const vendorDirectory = join(singlePackageDirectory, "vendor");
 mkdirSync(vendorDirectory, { recursive: true });
 for (const tarball of tarballs) copyFileSync(tarball, join(vendorDirectory, basename(tarball)));
-const pairTarball = tarballByPackage.get("@ai-cdl/pair");
-if (!pairTarball) throw new Error("Missing @ai-cdl/pair tarball.");
+const pairTarball = tarballByPackage.get("@lucamattiazzi/sommelier-client");
+if (!pairTarball) throw new Error("Missing @lucamattiazzi/sommelier-client tarball.");
 const overrides = Object.fromEntries(
   [...tarballByPackage].map(([name, tarball]) => [name, `file:./vendor/${basename(tarball)}`]),
 );
@@ -100,11 +103,11 @@ writeFileSync(
   join(singlePackageDirectory, "package.json"),
   `${JSON.stringify(
     {
-      name: "ai-cdl-single-tarball-smoke",
+      name: "sommelier-single-tarball-smoke",
       private: true,
       type: "module",
       dependencies: {
-        "@ai-cdl/pair": `file:./vendor/${basename(pairTarball)}`,
+        "@lucamattiazzi/sommelier-client": `file:./vendor/${basename(pairTarball)}`,
       },
     },
     null,
@@ -120,13 +123,15 @@ writeFileSync(
 run("pnpm", ["install", "--ignore-scripts"], singlePackageDirectory);
 writeFileSync(
   join(singlePackageDirectory, "single.mjs"),
-  `import { createPairClient } from "@ai-cdl/pair";\nif (typeof createPairClient !== "function") throw new Error("Missing single-package export");\n`,
+  `import { createPairClient } from "@lucamattiazzi/sommelier-client";\nif (typeof createPairClient !== "function") throw new Error("Missing single-package export");\n`,
 );
 run(process.execPath, ["single.mjs"], singlePackageDirectory);
 const singleLockfile = readFileSync(join(singlePackageDirectory, "pnpm-lock.yaml"), "utf8");
 for (const name of ["core", "excel", "addin-core", "protocol", "transport"]) {
-  if (!singleLockfile.includes(`vendor/ai-cdl-${name}-`)) {
-    throw new Error(`Single-package install did not resolve @ai-cdl/${name} from a local tarball.`);
+  if (!singleLockfile.includes(`vendor/lucamattiazzi-sommelier-${name}-`)) {
+    throw new Error(
+      `Single-package install did not resolve @lucamattiazzi/sommelier-${name} from a local tarball.`,
+    );
   }
 }
 
@@ -134,7 +139,7 @@ const consumerDirectory = join(temporaryRoot, "all-packages-consumer");
 mkdirSync(consumerDirectory);
 writeFileSync(
   join(consumerDirectory, "package.json"),
-  `${JSON.stringify({ name: "ai-cdl-external-smoke", private: true, type: "module" }, null, 2)}\n`,
+  `${JSON.stringify({ name: "sommelier-external-smoke", private: true, type: "module" }, null, 2)}\n`,
 );
 run(
   "npm",
@@ -143,15 +148,15 @@ run(
 );
 writeFileSync(
   join(consumerDirectory, "esm.mjs"),
-  `import { createAgentSession } from "@ai-cdl/core";\nimport { HttpAgentAdapter } from "@ai-cdl/agent-http";\nimport { createExcelTools } from "@ai-cdl/excel";\nimport { runAdapterContract } from "@ai-cdl/testing";\nimport { defineConfig } from "@ai-cdl/cli/config";\nimport { createPairClient } from "@ai-cdl/pair";\nimport { createAddinController } from "@ai-cdl/addin-core";\nfor (const value of [createAgentSession, HttpAgentAdapter, createExcelTools, runAdapterContract, defineConfig, createPairClient, createAddinController]) {\n  if (typeof value !== "function") throw new Error("Missing ESM export");\n}\n`,
+  `import { createAgentSession } from "@lucamattiazzi/sommelier-core";\nimport { HttpAgentAdapter } from "@lucamattiazzi/sommelier-agent-http";\nimport { createExcelTools } from "@lucamattiazzi/sommelier-excel";\nimport { runAdapterContract } from "@lucamattiazzi/sommelier-testing";\nimport { defineConfig } from "@lucamattiazzi/sommelier-config/config";\nimport { createPairClient } from "@lucamattiazzi/sommelier-client";\nimport { createAddinController } from "@lucamattiazzi/sommelier-addin-core";\nfor (const value of [createAgentSession, HttpAgentAdapter, createExcelTools, runAdapterContract, defineConfig, createPairClient, createAddinController]) {\n  if (typeof value !== "function") throw new Error("Missing ESM export");\n}\n`,
 );
 writeFileSync(
   join(consumerDirectory, "cjs.cjs"),
-  `for (const name of ["core", "agent-http", "excel", "testing", "protocol", "transport", "addin-core", "pair", "pair-cli"]) {\n  const loaded = require("@ai-cdl/" + name);\n  if (!loaded || typeof loaded !== "object") throw new Error("Missing CJS export: " + name);\n}\nconst config = require("@ai-cdl/cli/config");\nif (typeof config.defineConfig !== "function") throw new Error("Missing CJS config export");\n`,
+  `for (const name of ["core", "agent-http", "excel", "testing", "protocol", "transport", "addin-core", "client", ""]) {\n  const loaded = require("@lucamattiazzi/sommelier" + (name ? "-" + name : ""));\n  if (!loaded || typeof loaded !== "object") throw new Error("Missing CJS export: " + name);\n}\nconst config = require("@lucamattiazzi/sommelier-config/config");\nif (typeof config.defineConfig !== "function") throw new Error("Missing CJS config export");\n`,
 );
 writeFileSync(
   join(consumerDirectory, "types.ts"),
-  `import type { AgentAdapter } from "@ai-cdl/core";\nimport type { HttpAgentAdapterOptions } from "@ai-cdl/agent-http";\nimport { createPairClient } from "@ai-cdl/pair";\nconst adapter: AgentAdapter | undefined = undefined;\nconst http: HttpAgentAdapterOptions = { endpoint: "https://example.com" };\nconst pairOptions: Parameters<typeof createPairClient>[0] | undefined = undefined;\nvoid [adapter, http, pairOptions];\n`,
+  `import type { AgentAdapter } from "@lucamattiazzi/sommelier-core";\nimport type { HttpAgentAdapterOptions } from "@lucamattiazzi/sommelier-agent-http";\nimport { createPairClient } from "@lucamattiazzi/sommelier-client";\nconst adapter: AgentAdapter | undefined = undefined;\nconst http: HttpAgentAdapterOptions = { endpoint: "https://example.com" };\nconst pairOptions: Parameters<typeof createPairClient>[0] | undefined = undefined;\nvoid [adapter, http, pairOptions];\n`,
 );
 writeFileSync(
   join(consumerDirectory, "tsconfig.json"),
@@ -174,11 +179,11 @@ writeFileSync(
 run(process.execPath, ["esm.mjs"], consumerDirectory);
 run(process.execPath, ["cjs.cjs"], consumerDirectory);
 run(join(root, "node_modules/.bin/tsc"), ["--project", "tsconfig.json"], consumerDirectory);
-for (const binary of ["ai-cdl", "ai-cdl-contract", "ai-cdl-pair-agent"]) {
+for (const binary of ["sommelier-config", "sommelier-contract", "sommelier"]) {
   run(join(consumerDirectory, `node_modules/.bin/${binary}`), ["--help"], consumerDirectory);
 }
 
-const adapterDist = join(consumerDirectory, "node_modules/@ai-cdl/pair-cli/dist");
+const adapterDist = join(consumerDirectory, "node_modules/@lucamattiazzi/sommelier/dist");
 for (const asset of [
   "skill/SKILL.md",
   "skill/scripts/session.mjs",
@@ -190,26 +195,26 @@ for (const asset of [
 const emptyProfiles = spawnSync(process.execPath, [join(adapterDist, "agent.js"), "list"], {
   cwd: consumerDirectory,
   encoding: "utf8",
-  env: { ...process.env, AI_CDL_PAIR_HOME: join(temporaryRoot, "empty-profiles") },
+  env: { ...process.env, SOMMELIER_HOME: join(temporaryRoot, "empty-profiles") },
 });
 if (emptyProfiles.status !== 0 || JSON.parse(emptyProfiles.stdout).terminals.length !== 0)
   throw new Error("Packed adapter cannot list profiles.");
 
-// The existing Pair CLI reports usage with status 1 when no subcommand is supplied.
-const pairUsage = spawnSync(join(consumerDirectory, "node_modules/.bin/ai-cdl-pair"), [], {
+// The existing Sommelier CLI reports usage with status 1 when no subcommand is supplied.
+const pairUsage = spawnSync(join(consumerDirectory, "node_modules/.bin/sommelier-relay"), [], {
   cwd: consumerDirectory,
   encoding: "utf8",
 });
-if (pairUsage.status !== 1 || !pairUsage.stderr.includes("Usage: ai-cdl-pair relay")) {
-  throw new Error("Packed Pair CLI did not expose its usage contract.");
+if (pairUsage.status !== 1 || !pairUsage.stderr.includes("Usage: sommelier-relay relay")) {
+  throw new Error("Packed Sommelier CLI did not expose its usage contract.");
 }
 writeFileSync(
   join(consumerDirectory, "pair.mjs"),
   `import assert from "node:assert/strict";
-import { createPairClient, createPairAddinSession } from "@ai-cdl/pair";
-import { createInMemoryTransportPair } from "@ai-cdl/transport";
-import { createAddinController } from "@ai-cdl/addin-core";
-import { InMemoryExcelAdapter } from "@ai-cdl/excel";
+import { createPairClient, createPairAddinSession } from "@lucamattiazzi/sommelier-client";
+import { createInMemoryTransportPair } from "@lucamattiazzi/sommelier-transport";
+import { createAddinController } from "@lucamattiazzi/sommelier-addin-core";
+import { InMemoryExcelAdapter } from "@lucamattiazzi/sommelier-excel";
 const [addinTransport, agentTransport] = createInMemoryTransportPair();
 const adapter = new InMemoryExcelAdapter({ sheets: [{ name: "Sheet1", values: [[10]] }] });
 let approvals = 0;

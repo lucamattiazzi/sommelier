@@ -20,6 +20,7 @@ Repository-specific changes:
 - Documentation describes this standalone checkout, its retained dependencies, and publication.
 - CI verifies Pair and packages without an automatic publishing workflow.
 
-Package names and versions are preserved. The original and extracted repositories therefore must
-not independently publish competing versions of the same `@ai-cdl/*` packages. Choose one release
-owner for the retained packages before the first independent release.
+Package names and versions were preserved at extraction time. The independent project was
+subsequently renamed Sommelier in `0.2.0-beta.1`, with new `@lucamattiazzi/sommelier*` package
+names and reorganized directories. The original `@ai-cdl/*` publications remain available.
+See [migration to Sommelier](migration-to-sommelier.md) for the current names.

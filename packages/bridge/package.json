@@ -1,0 +1,55 @@
+{
+  "name": "@lucamattiazzi/sommelier",
+  "version": "0.2.0-beta.1",
+  "description": "Encrypted Excel bridge, native coding-harness adapters, MCP tools and local trace subscriptions",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "bin": {
+    "sommelier": "./dist/agent.js",
+    "sommelier-relay": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@lucamattiazzi/sommelier-protocol": "workspace:^",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "ws": "8.21.0",
+    "zod": "4.1.5"
+  },
+  "devDependencies": {
+    "@types/ws": "8.18.1"
+  },
+  "engines": {
+    "node": ">=22.12"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucamattiazzi/sommelier.git",
+    "directory": "packages/bridge"
+  },
+  "homepage": "https://github.com/lucamattiazzi/sommelier#readme",
+  "bugs": {
+    "url": "https://github.com/lucamattiazzi/sommelier/issues"
+  }
+}

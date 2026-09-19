@@ -3,7 +3,7 @@ import {
   type AgentEvent,
   type AgentTurnRequest,
   PROTOCOL_VERSION,
-} from "@ai-cdl/core";
+} from "@lucamattiazzi/sommelier-core";
 import { describe, expect, it } from "vitest";
 import { runAdapterContract } from "./contract.js";
 
@@ -33,7 +33,7 @@ describe("runAdapterContract", () => {
   it("rejects non-positive timeouts", async () => {
     const adapter = { async *runTurn() {} } satisfies AgentAdapter;
     await expect(runAdapterContract(adapter, { timeoutMs: 0 })).rejects.toThrow(
-      "AI_CDL_CONTRACT_TIMEOUT_INVALID",
+      "SOMMELIER_CONTRACT_TIMEOUT_INVALID",
     );
   });
 
@@ -51,7 +51,7 @@ describe("runAdapterContract", () => {
     const adapter: AgentAdapter = {
       async *runTurn(request: AgentTurnRequest, options: { signal: AbortSignal }) {
         if (options.signal.aborted) throw options.signal.reason;
-        const prompt = request.userMessage.text.replace("AI-CDL contract: ", "");
+        const prompt = request.userMessage.text.replace("Sommelier contract: ", "");
         const priorTurnId = turnIds.get(prompt);
         if (priorTurnId && priorTurnId !== request.turnId) {
           throw new Error(`Continuation changed turn id for ${prompt}.`);

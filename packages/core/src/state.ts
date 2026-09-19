@@ -1,4 +1,4 @@
-import { AiCdlError } from "./errors.js";
+import { SommelierError } from "./errors.js";
 
 /** Explicit session execution states. */
 export type SessionState =
@@ -31,9 +31,9 @@ export class SessionStateMachine {
 
   transition(next: SessionState): void {
     if (!transitions[this.#state].includes(next)) {
-      throw new AiCdlError({
-        code: "AI_CDL_INVALID_STATE_TRANSITION",
-        message: `Cannot transition an AI-CDL session from ${this.#state} to ${next}.`,
+      throw new SommelierError({
+        code: "SOMMELIER_INVALID_STATE_TRANSITION",
+        message: `Cannot transition an Sommelier session from ${this.#state} to ${next}.`,
         context: { from: this.#state, to: next },
         suggestedAction: "Cancel the active turn before starting another operation.",
       });

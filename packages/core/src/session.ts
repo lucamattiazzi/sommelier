@@ -1,4 +1,4 @@
-import { AiCdlError, asAiCdlError } from "./errors.js";
+import { asSommelierError, SommelierError } from "./errors.js";
 import type { SessionEvent, SessionEventBody, TraceRedaction, TraceSink } from "./events.js";
 import { redactSessionEvent } from "./events.js";
 import type { ApprovalPolicy } from "./policy.js";
@@ -104,8 +104,8 @@ class AgentSessionImpl implements AgentSession {
     this.#agent = options.agent;
     this.#tools = new Map(options.tools.map((tool) => [tool.name, tool]));
     if (this.#tools.size !== options.tools.length) {
-      throw new AiCdlError({
-        code: "AI_CDL_DUPLICATE_TOOL",
+      throw new SommelierError({
+        code: "SOMMELIER_DUPLICATE_TOOL",
         message: "Tool names must be unique.",
       });
     }
@@ -131,7 +131,7 @@ class AgentSessionImpl implements AgentSession {
 
   cancel(reason = "The turn was cancelled by the host application."): void {
     this.#cancelReason = reason;
-    this.#turnAbort?.abort(new AiCdlError({ code: "AI_CDL_CANCELLED", message: reason }));
+    this.#turnAbort?.abort(new SommelierError({ code: "SOMMELIER_CANCELLED", message: reason }));
     for (const approval of this.#approvals.values()) approval.resolve({ approved: false, reason });
     this.#approvals.clear();
   }
@@ -156,8 +156,8 @@ class AgentSessionImpl implements AgentSession {
         "executing_write_tool",
       ].includes(this.state)
     ) {
-      throw new AiCdlError({
-        code: "AI_CDL_ACTIVE_TURN",
+      throw new SommelierError({
+        code: "SOMMELIER_ACTIVE_TURN",
         message: "This session already has an active turn.",
         suggestedAction: "Wait for the active turn or cancel it before sending another message.",
       });
@@ -172,7 +172,7 @@ class AgentSessionImpl implements AgentSession {
     const turnTimer = setTimeout(
       () =>
         controller.abort(
-          new AiCdlError({ code: "AI_CDL_TIMEOUT", message: "The turn timed out." }),
+          new SommelierError({ code: "SOMMELIER_TIMEOUT", message: "The turn timed out." }),
         ),
       limits.turnTimeoutMs,
     );
@@ -221,8 +221,8 @@ class AgentSessionImpl implements AgentSession {
         for await (const event of events) {
           this.#throwIfAborted(controller.signal);
           if (event.protocolVersion !== PROTOCOL_VERSION) {
-            throw new AiCdlError({
-              code: "AI_CDL_AGENT_PROTOCOL_INVALID",
+            throw new SommelierError({
+              code: "SOMMELIER_AGENT_PROTOCOL_INVALID",
               message: `Unsupported agent protocol version: ${event.protocolVersion}.`,
               suggestedAction: `Configure the adapter to use protocol ${PROTOCOL_VERSION}.`,
             });
@@ -266,7 +266,7 @@ class AgentSessionImpl implements AgentSession {
       this.#budgetError("agent iterations", limits.maxAgentIterations);
     } catch (error) {
       const structured = this.#normalizeTurnError(error, controller.signal);
-      if (structured.code === "AI_CDL_CANCELLED" || structured.code === "AI_CDL_TIMEOUT") {
+      if (structured.code === "SOMMELIER_CANCELLED" || structured.code === "SOMMELIER_TIMEOUT") {
         this.#machine.transition("cancelled");
         this.#emit({ type: "turn.cancelled", payload: { reason: structured.message } });
       } else {
@@ -280,7 +280,10 @@ class AgentSessionImpl implements AgentSession {
       this.#turnId = undefined;
       this.#approvals.clear();
     }
-    throw new AiCdlError({ code: "AI_CDL_UNREACHABLE", message: "The turn ended unexpectedly." });
+    throw new SommelierError({
+      code: "SOMMELIER_UNREACHABLE",
+      message: "The turn ended unexpectedly.",
+    });
   }
 
   async #executeTool(
@@ -300,8 +303,8 @@ class AgentSessionImpl implements AgentSession {
     );
     const tool = this.#tools.get(event.name);
     if (!tool) {
-      const error = new AiCdlError({
-        code: "AI_CDL_TOOL_NOT_FOUND",
+      const error = new SommelierError({
+        code: "SOMMELIER_TOOL_NOT_FOUND",
         message: `The agent requested unavailable tool ${event.name}.`,
         context: { toolName: event.name },
         suggestedAction: "Use one of the tool declarations supplied with the turn request.",
@@ -314,8 +317,8 @@ class AgentSessionImpl implements AgentSession {
     }
     const parsed = tool.input.safeParse(event.arguments);
     if (!parsed.success) {
-      const error = new AiCdlError({
-        code: "AI_CDL_TOOL_ARGUMENTS_INVALID",
+      const error = new SommelierError({
+        code: "SOMMELIER_TOOL_ARGUMENTS_INVALID",
         message: `Invalid arguments for ${event.name}.`,
         context: {
           issues: parsed.error.issues
@@ -356,8 +359,8 @@ class AgentSessionImpl implements AgentSession {
       ...(tool.classification === "read" ? {} : { preview }),
     });
     if (decision.action === "deny") {
-      const error = new AiCdlError({
-        code: "AI_CDL_POLICY_DENIED",
+      const error = new SommelierError({
+        code: "SOMMELIER_POLICY_DENIED",
         message: decision.reason,
         context: { toolName: tool.name },
       });
@@ -415,8 +418,11 @@ class AgentSessionImpl implements AgentSession {
         bytes,
       };
     } catch (error) {
-      const structured = asAiCdlError(error);
-      if (structured.code === "AI_CDL_BUDGET_EXCEEDED" || structured.code === "AI_CDL_TIMEOUT") {
+      const structured = asSommelierError(error);
+      if (
+        structured.code === "SOMMELIER_BUDGET_EXCEEDED" ||
+        structured.code === "SOMMELIER_TIMEOUT"
+      ) {
         throw structured;
       }
       this.#emit(
@@ -445,8 +451,8 @@ class AgentSessionImpl implements AgentSession {
   #resolveApproval(requestId: string, resolution: { approved: boolean; reason?: string }): void {
     const pending = this.#approvals.get(requestId);
     if (!pending) {
-      throw new AiCdlError({
-        code: "AI_CDL_APPROVAL_NOT_FOUND",
+      throw new SommelierError({
+        code: "SOMMELIER_APPROVAL_NOT_FOUND",
         message: `Approval request ${requestId} is not pending.`,
         suggestedAction: "Resolve only request IDs from approval.requested events.",
       });
@@ -465,7 +471,7 @@ class AgentSessionImpl implements AgentSession {
 
   #errorResult(
     toolCallId: string,
-    error: AiCdlError,
+    error: SommelierError,
     status: "error" | "rejected" = "error",
   ): ToolResultMessage {
     return {
@@ -478,8 +484,8 @@ class AgentSessionImpl implements AgentSession {
   }
 
   #budgetError(resource: string, limit: number): never {
-    throw new AiCdlError({
-      code: "AI_CDL_BUDGET_EXCEEDED",
+    throw new SommelierError({
+      code: "SOMMELIER_BUDGET_EXCEEDED",
       message: `The turn exceeded its ${resource} budget of ${limit}.`,
       context: { resource, limit },
       suggestedAction: "Request a smaller range or increase the explicit session limit.",
@@ -491,7 +497,9 @@ class AgentSessionImpl implements AgentSession {
     const timeout = new Promise<never>((_, reject) => {
       timer = setTimeout(
         () =>
-          reject(new AiCdlError({ code: "AI_CDL_TIMEOUT", message: "Tool execution timed out." })),
+          reject(
+            new SommelierError({ code: "SOMMELIER_TIMEOUT", message: "Tool execution timed out." }),
+          ),
         timeoutMs,
       );
       signal.addEventListener("abort", () => reject(signal.reason), { once: true });
@@ -506,17 +514,18 @@ class AgentSessionImpl implements AgentSession {
   #throwIfAborted(signal: AbortSignal): void {
     if (signal.aborted)
       throw (
-        signal.reason ?? new AiCdlError({ code: "AI_CDL_CANCELLED", message: this.#cancelReason })
+        signal.reason ??
+        new SommelierError({ code: "SOMMELIER_CANCELLED", message: this.#cancelReason })
       );
   }
 
-  #normalizeTurnError(error: unknown, signal: AbortSignal): AiCdlError {
+  #normalizeTurnError(error: unknown, signal: AbortSignal): SommelierError {
     if (signal.aborted) {
       const reason = signal.reason;
-      if (reason instanceof AiCdlError) return reason;
-      return new AiCdlError({ code: "AI_CDL_CANCELLED", message: this.#cancelReason });
+      if (reason instanceof SommelierError) return reason;
+      return new SommelierError({ code: "SOMMELIER_CANCELLED", message: this.#cancelReason });
     }
-    return asAiCdlError(error);
+    return asSommelierError(error);
   }
 
   #emit(body: SessionEventBody, toolCallId?: string): SessionEvent {

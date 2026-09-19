@@ -39,27 +39,27 @@ importers:
         specifier: 4.1.11
         version: 4.1.11(@types/node@24.3.0)(@vitest/coverage-v8@4.1.11)(vite@7.3.6(@types/node@24.3.0)(jiti@2.7.0)(terser@5.50.0)(tsx@4.20.5)(yaml@2.9.0))
 
-  apps/pair-addin:
+  apps/addin:
     dependencies:
-      '@ai-cdl/addin-core':
+      '@lucamattiazzi/sommelier-addin-core':
         specifier: workspace:^
         version: link:../../packages/addin-core
-      '@ai-cdl/agent-http':
+      '@lucamattiazzi/sommelier-agent-http':
         specifier: workspace:^
         version: link:../../packages/agent-http
-      '@ai-cdl/core':
+      '@lucamattiazzi/sommelier-client':
+        specifier: workspace:^
+        version: link:../../packages/client
+      '@lucamattiazzi/sommelier-core':
         specifier: workspace:^
         version: link:../../packages/core
-      '@ai-cdl/excel':
+      '@lucamattiazzi/sommelier-excel':
         specifier: workspace:^
         version: link:../../packages/excel
-      '@ai-cdl/pair':
-        specifier: workspace:^
-        version: link:../../packages/pair
-      '@ai-cdl/testing':
+      '@lucamattiazzi/sommelier-testing':
         specifier: workspace:^
         version: link:../../packages/testing
-      '@ai-cdl/transport':
+      '@lucamattiazzi/sommelier-transport':
         specifier: workspace:^
         version: link:../../packages/transport
       office-addin-dev-certs:
@@ -72,9 +72,9 @@ importers:
         specifier: 19.1.1
         version: 19.1.1(react@19.1.1)
     devDependencies:
-      '@ai-cdl/cli':
+      '@lucamattiazzi/sommelier-config':
         specifier: workspace:^
-        version: link:../../packages/cli
+        version: link:../../packages/config
       '@types/office-js':
         specifier: 1.0.547
         version: 1.0.547
@@ -91,12 +91,12 @@ importers:
         specifier: 7.3.6
         version: 7.3.6(@types/node@24.3.0)(jiti@2.7.0)(terser@5.50.0)(tsx@4.20.5)(yaml@2.9.0)
 
-  apps/pair-server:
+  apps/server:
     dependencies:
-      '@ai-cdl/protocol':
+      '@lucamattiazzi/sommelier-protocol':
         specifier: workspace:^
         version: link:../../packages/protocol
-      '@ai-cdl/transport':
+      '@lucamattiazzi/sommelier-transport':
         specifier: workspace:^
         version: link:../../packages/transport
       ws:
@@ -109,23 +109,54 @@ importers:
 
   packages/addin-core:
     dependencies:
-      '@ai-cdl/excel':
+      '@lucamattiazzi/sommelier-excel':
         specifier: workspace:^
         version: link:../excel
-      '@ai-cdl/protocol':
+      '@lucamattiazzi/sommelier-protocol':
         specifier: workspace:^
         version: link:../protocol
 
   packages/agent-http:
     dependencies:
-      '@ai-cdl/core':
+      '@lucamattiazzi/sommelier-core':
         specifier: workspace:^
         version: link:../core
       zod:
         specifier: 4.1.5
         version: 4.1.5
 
-  packages/cli:
+  packages/bridge:
+    dependencies:
+      '@lucamattiazzi/sommelier-protocol':
+        specifier: workspace:^
+        version: link:../protocol
+      '@modelcontextprotocol/sdk':
+        specifier: 1.30.0
+        version: 1.30.0(supports-color@7.2.0)(zod@4.1.5)
+      ws:
+        specifier: 8.21.0
+        version: 8.21.0
+      zod:
+        specifier: 4.1.5
+        version: 4.1.5
+    devDependencies:
+      '@types/ws':
+        specifier: 8.18.1
+        version: 8.18.1
+
+  packages/client:
+    dependencies:
+      '@lucamattiazzi/sommelier-addin-core':
+        specifier: workspace:^
+        version: link:../addin-core
+      '@lucamattiazzi/sommelier-protocol':
+        specifier: workspace:^
+        version: link:../protocol
+      '@lucamattiazzi/sommelier-transport':
+        specifier: workspace:^
+        version: link:../transport
+
+  packages/config:
     dependencies:
       commander:
         specifier: 15.0.0
@@ -152,7 +183,7 @@ importers:
 
   packages/excel:
     dependencies:
-      '@ai-cdl/core':
+      '@lucamattiazzi/sommelier-core':
         specifier: workspace:^
         version: link:../core
       zod:
@@ -163,37 +194,6 @@ importers:
         specifier: 1.0.547
         version: 1.0.547
 
-  packages/pair:
-    dependencies:
-      '@ai-cdl/addin-core':
-        specifier: workspace:^
-        version: link:../addin-core
-      '@ai-cdl/protocol':
-        specifier: workspace:^
-        version: link:../protocol
-      '@ai-cdl/transport':
-        specifier: workspace:^
-        version: link:../transport
-
-  packages/pair-cli:
-    dependencies:
-      '@ai-cdl/protocol':
-        specifier: workspace:^
-        version: link:../protocol
-      '@modelcontextprotocol/sdk':
-        specifier: 1.30.0
-        version: 1.30.0(supports-color@7.2.0)(zod@4.1.5)
-      ws:
-        specifier: 8.21.0
-        version: 8.21.0
-      zod:
-        specifier: 4.1.5
-        version: 4.1.5
-    devDependencies:
-      '@types/ws':
-        specifier: 8.18.1
-        version: 8.18.1
-
   packages/protocol:
     dependencies:
       zod:
@@ -202,13 +202,13 @@ importers:
 
   packages/testing:
     dependencies:
-      '@ai-cdl/agent-http':
+      '@lucamattiazzi/sommelier-agent-http':
         specifier: workspace:^
         version: link:../agent-http
-      '@ai-cdl/core':
+      '@lucamattiazzi/sommelier-core':
         specifier: workspace:^
         version: link:../core
-      '@ai-cdl/excel':
+      '@lucamattiazzi/sommelier-excel':
         specifier: workspace:^
         version: link:../excel
       commander:
@@ -220,7 +220,7 @@ importers:
 
   packages/transport:
     dependencies:
-      '@ai-cdl/protocol':
+      '@lucamattiazzi/sommelier-protocol':
         specifier: workspace:^
         version: link:../protocol
 

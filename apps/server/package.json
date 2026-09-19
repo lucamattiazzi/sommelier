@@ -1,0 +1,21 @@
+{
+  "name": "@lucamattiazzi/sommelier-server",
+  "version": "0.1.2-beta.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "dev": "PAIR_PUBLIC_ORIGIN=https://localhost:3000 PAIR_AGENT_ORIGIN=ws://127.0.0.1:3001 PAIR_BRIDGE_SCRIPT=../../skills/sommelier/scripts/session.mjs PORT=3001 tsx watch src/main.ts",
+    "start": "node dist/main.cjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@lucamattiazzi/sommelier-protocol": "workspace:^",
+    "@lucamattiazzi/sommelier-transport": "workspace:^",
+    "ws": "8.21.0"
+  },
+  "devDependencies": {
+    "@types/ws": "8.18.1"
+  }
+}

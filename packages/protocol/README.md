@@ -1,11 +1,11 @@
-# @ai-cdl/protocol
+# @lucamattiazzi/sommelier-protocol
 
-Provider-independent TypeScript types and Zod runtime schemas for AI-CDL protocol `0.2`.
+Provider-independent TypeScript types and Zod runtime schemas for Sommelier protocol `0.2`.
 The package describes Excel observation, action, and interaction methods without depending on
-Office.js, a model provider, browser APIs, or `@ai-cdl/core`.
+Office.js, a model provider, browser APIs, or `@lucamattiazzi/sommelier-core`.
 
 ```ts
-import { parseProtocolMessage, PROTOCOL_VERSION } from "@ai-cdl/protocol";
+import { parseProtocolMessage, PROTOCOL_VERSION } from "@lucamattiazzi/sommelier-protocol";
 
 const message = parseProtocolMessage({
   protocolVersion: PROTOCOL_VERSION,

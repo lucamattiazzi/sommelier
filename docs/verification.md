@@ -21,7 +21,7 @@ Verified locally with Node.js `24.19.0` and pnpm `11.21.0`:
   and agent bridge responses from an ephemeral loopback port.
 - Local Markdown links resolve. No enterprise module, demo, private environment file, generated
   session script, certificate, database, or dependency/build directory enters the source inventory.
-- The original AI-CDL working tree remains clean.
+- The original Sommelier working tree remains clean.
 
 No real Excel session, live OpenCode/model session, npm publication, or AppSource submission was
 performed. The Docker daemon was unavailable at its configured OrbStack socket, so the container

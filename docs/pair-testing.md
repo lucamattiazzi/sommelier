@@ -1,4 +1,4 @@
-# Provare AI-CDL Pair
+# Provare Sommelier
 
 Stato: **preview per test personali**, non una release Marketplace.
 Questa estrazione autonoma non pubblica pacchetti npm e non distribuisce un servizio.
@@ -11,22 +11,22 @@ Prerequisiti: Node.js 22+ e pnpm tramite Corepack. Dalla radice del checkout:
 corepack enable
 pnpm install --frozen-lockfile
 pnpm build
-pnpm pair:test
+pnpm test:pairing
 ```
 
 Due terminali, entrambi dalla radice:
 
 ```sh
-pnpm pair:server:dev
+pnpm server:dev
 ```
 
 ```sh
-pnpm pair:addin:dev
+pnpm addin:dev
 ```
 
 Vite serve il task pane su `https://localhost:3000`; il relay locale ascolta su `127.0.0.1:3001`.
 Il primo avvio può chiedere di installare e considerare attendibile il certificato di sviluppo Office.
-Carica in Excel il manifest **`apps/pair-addin/manifest.xml`**.
+Carica in Excel il manifest **`apps/addin/manifest.xml`**.
 L'URL del manifest è `https://localhost:3000/manifest.xml` per i percorsi di sideload che lo accettano.
 Per il sideload su Mac/Web usa i [passaggi ufficiali Microsoft](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/sideload-office-add-ins-for-testing).
 
@@ -99,12 +99,12 @@ le tabelle sopra il limite vengono rifiutate, anche chiedendo una pagina piccola
 Il confronto prima/dopo del dialogo mostra fino a 8 righe e 5 colonne; l'approvazione riguarda tutto il range indicato.
 L'undo conserva valori e formule per le operazioni preview/commit della sessione; non è un backup del file,
 non ripristina formati o strutture e non offre una transazione atomica fra più utenti.
-Per le scritture dirette senza operation ID, usare l'undo di Excel quando disponibile; Pair non le inserisce nella cronologia operazioni.
+Per le scritture dirette senza operation ID, usare l'undo di Excel quando disponibile; Sommelier non le inserisce nella cronologia operazioni.
 Formule dinamiche, celle unite, fogli protetti e workbook con connessioni esterne richiedono ulteriori test Office reali.
 
 ## Endpoint diretto e arresto
 
-Il percorso `Disconnect / use a direct agent` accetta un endpoint che implementa **AI-CDL 0.1** e CORS.
+Il percorso `Disconnect / use a direct agent` accetta un endpoint che implementa **Sommelier 0.1** e CORS.
 Non inserire direttamente una normale API `/v1/chat/completions`: serve l'adapter/bridge appropriato.
 Il token resta nella memoria della pagina e viene eliminato passando fuori dalla connessione diretta.
 `Stop task` annulla il turno in corso; uscire dalla chat annulla anche eventuali approvazioni pendenti.

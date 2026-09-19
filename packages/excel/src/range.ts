@@ -1,4 +1,4 @@
-import { AiCdlError } from "@ai-cdl/core";
+import { SommelierError } from "@lucamattiazzi/sommelier-core";
 
 /** Parsed zero-based rectangular A1 range. */
 export interface ParsedRange {
@@ -63,9 +63,9 @@ export function toA1Cell(row: number, column: number): string {
   return `${columnLabel(column)}${row + 1}`;
 }
 
-function invalidRange(input: string): AiCdlError {
-  return new AiCdlError({
-    code: "AI_CDL_EXCEL_RANGE_INVALID",
+function invalidRange(input: string): SommelierError {
+  return new SommelierError({
+    code: "SOMMELIER_EXCEL_RANGE_INVALID",
     message: `Invalid bounded A1 range: ${input}.`,
     context: { range: input },
     suggestedAction:
@@ -82,8 +82,8 @@ export function assertMatrixShape(
   const valid =
     matrix.length === range.rowCount && matrix.every((row) => row.length === range.columnCount);
   if (!valid) {
-    throw new AiCdlError({
-      code: "AI_CDL_EXCEL_SHAPE_MISMATCH",
+    throw new SommelierError({
+      code: "SOMMELIER_EXCEL_SHAPE_MISMATCH",
       message: `${label} must be a ${range.rowCount} by ${range.columnCount} matrix for ${range.address}.`,
       context: {
         range: range.address,

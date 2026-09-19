@@ -1,7 +1,7 @@
 ---
-"@ai-cdl/transport": minor
-"@ai-cdl/cli": minor
-"@ai-cdl/pair-cli": patch
+"@lucamattiazzi/sommelier-transport": minor
+"@lucamattiazzi/sommelier-config": minor
+"@lucamattiazzi/sommelier": patch
 ---
 
 Add authenticated end-to-end encrypted socket helpers and stable Pair identities, keeping encrypted

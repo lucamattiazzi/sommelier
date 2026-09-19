@@ -1,7 +1,7 @@
 {
-  "name": "@ai-cdl/addin-core",
-  "version": "0.2.0-beta.0",
-  "description": "Host-agnostic Excel add-in runtime for AI-CDL",
+  "name": "@lucamattiazzi/sommelier-addin-core",
+  "version": "0.2.0-beta.1",
+  "description": "Host-agnostic Excel add-in runtime for Sommelier",
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -23,21 +23,21 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --external @ai-cdl/protocol --external @ai-cdl/excel",
+    "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --external @lucamattiazzi/sommelier-protocol --external @lucamattiazzi/sommelier-excel",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
-    "@ai-cdl/excel": "workspace:^",
-    "@ai-cdl/protocol": "workspace:^"
+    "@lucamattiazzi/sommelier-excel": "workspace:^",
+    "@lucamattiazzi/sommelier-protocol": "workspace:^"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair.git",
+    "url": "https://github.com/lucamattiazzi/sommelier.git",
     "directory": "packages/addin-core"
   },
-  "homepage": "https://github.com/lucamattiazzi/ai-cdl-pair#readme",
+  "homepage": "https://github.com/lucamattiazzi/sommelier#readme",
   "bugs": {
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair/issues"
+    "url": "https://github.com/lucamattiazzi/sommelier/issues"
   }
 }

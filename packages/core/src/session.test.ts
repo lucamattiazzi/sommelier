@@ -98,7 +98,7 @@ describe("createAgentSession", () => {
     });
     const session = createAgentSession({ agent, tools: [tool], limits: { maxToolCalls: 1 } });
     await expect(session.sendMessage({ text: "loop" })).rejects.toMatchObject({
-      code: "AI_CDL_BUDGET_EXCEEDED",
+      code: "SOMMELIER_BUDGET_EXCEEDED",
     });
   });
 
@@ -123,7 +123,7 @@ describe("createAgentSession", () => {
     });
     const session = createAgentSession({ agent, tools: [tool], limits: { maxBytesReturned: 1 } });
     await expect(session.sendMessage({ text: "read" })).rejects.toMatchObject({
-      code: "AI_CDL_BUDGET_EXCEEDED",
+      code: "SOMMELIER_BUDGET_EXCEEDED",
     });
     expect(session.state).toBe("failed");
   });

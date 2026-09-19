@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import { HttpAgentAdapter } from "@ai-cdl/agent-http";
+import { HttpAgentAdapter } from "@lucamattiazzi/sommelier-agent-http";
 import {
   type AgentAdapter,
   type AgentEvent,
   type AgentTurnRequest,
   PROTOCOL_VERSION,
-} from "@ai-cdl/core";
+} from "@lucamattiazzi/sommelier-core";
 import { Command, InvalidArgumentError } from "commander";
 import { runAdapterContract } from "./contract.js";
 
@@ -19,8 +19,8 @@ function positiveNumber(value: string): number {
 }
 
 const program = new Command()
-  .name("ai-cdl-contract")
-  .description("Validate an AI-CDL agent adapter endpoint.")
+  .name("sommelier-contract")
+  .description("Validate an Sommelier agent adapter endpoint.")
   .version("0.1.0")
   .option("--endpoint <url>", "HTTP endpoint")
   .option("--scripted", "use the built-in deterministic protocol adapter")
@@ -44,7 +44,7 @@ const program = new Command()
           ? new ContractAdapter()
           : undefined;
       if (!adapter) {
-        throw new Error("AI_CDL_CONTRACT_TARGET_REQUIRED: Pass --endpoint <url> or --scripted.");
+        throw new Error("SOMMELIER_CONTRACT_TARGET_REQUIRED: Pass --endpoint <url> or --scripted.");
       }
       const report = await runAdapterContract(adapter, { timeoutMs: options.timeoutMs });
       console.log(

@@ -41,4 +41,4 @@ bodies, logs, or trace fields.
 
 Non-2xx responses retain only status and a safe request ID. Invalid JSON, schema mismatches,
 network failures, timeout, and cancellation use distinct stable error codes. Use
-`ai-cdl-contract --endpoint <url> --timeout-ms 60000` before integration.
+`sommelier-contract --endpoint <url> --timeout-ms 60000` before integration.

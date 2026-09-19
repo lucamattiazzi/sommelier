@@ -6,7 +6,7 @@ import {
   type JsonValue,
   PROTOCOL_VERSION,
   type ToolResultMessage,
-} from "@ai-cdl/core";
+} from "@lucamattiazzi/sommelier-core";
 
 /** One adapter contract check. */
 export interface ContractCaseResult {
@@ -52,7 +52,7 @@ function request(prompt: string, toolResults: readonly ToolResultMessage[] = [])
     userMessage: {
       protocolVersion: PROTOCOL_VERSION,
       type: "user_message",
-      text: `AI-CDL contract: ${prompt}`,
+      text: `Sommelier contract: ${prompt}`,
       selectionIncluded: false,
     },
     tools: capabilities,
@@ -78,7 +78,7 @@ export async function runAdapterContract(
 ): Promise<AdapterContractReport> {
   const timeoutMs = options.timeoutMs ?? 30_000;
   if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) {
-    throw new Error("AI_CDL_CONTRACT_TIMEOUT_INVALID: timeoutMs must be a positive number.");
+    throw new Error("SOMMELIER_CONTRACT_TIMEOUT_INVALID: timeoutMs must be a positive number.");
   }
   const cases: ContractCaseResult[] = [];
   const check = async (name: string, execute: (signal: AbortSignal) => Promise<boolean>) => {

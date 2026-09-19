@@ -1,6 +1,6 @@
 import { once } from "node:events";
 import { createServer } from "node:http";
-import { PROTOCOL_VERSION } from "@ai-cdl/core";
+import { PROTOCOL_VERSION } from "@lucamattiazzi/sommelier-core";
 import { afterEach, describe, expect, it } from "vitest";
 import { HttpAgentAdapter } from "./index.js";
 
@@ -65,7 +65,7 @@ describe("HttpAgentAdapter", () => {
         /* consume */
       }
     };
-    await expect(run()).rejects.toMatchObject({ code: "AI_CDL_HTTP_STATUS_ERROR" });
+    await expect(run()).rejects.toMatchObject({ code: "SOMMELIER_HTTP_STATUS_ERROR" });
     await expect(run()).rejects.not.toThrow(/private-token|must-not-leak/);
   });
 });

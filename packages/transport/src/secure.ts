@@ -42,7 +42,7 @@ export async function pairConnectionUrl(
   role: PairRole,
 ): Promise<string> {
   if (decode(identity.secret).length !== 32)
-    throw new Error("Pair secrets must contain 32 random bytes.");
+    throw new Error("Sommelier secrets must contain 32 random bytes.");
   const url = new URL("/connect", origin);
   const local = ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname);
   if (
@@ -106,7 +106,7 @@ export interface SecureChannel {
 
 /** PSK authentication, fresh challenges, directional AES-GCM keys and ordered replay protection. */
 export function createSecureChannel(options: SecureChannelOptions): SecureChannel {
-  if (decode(options.secret).length !== 32) throw new Error("Invalid Pair secret.");
+  if (decode(options.secret).length !== 32) throw new Error("Invalid Sommelier secret.");
   const peer: PairRole = options.role === "addin" ? "agent" : "addin";
   let nonce = "";
   let remoteNonce = "";

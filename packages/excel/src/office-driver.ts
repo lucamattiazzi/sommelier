@@ -1,6 +1,6 @@
 /// <reference types="office-js" />
 
-import { AiCdlError } from "@ai-cdl/core";
+import { SommelierError } from "@lucamattiazzi/sommelier-core";
 import type {
   CellValue,
   RangeData,
@@ -228,8 +228,8 @@ export class OfficeJsWorkbookDriver implements WorkbookDriver {
     abortIfNeeded(signal);
     const capabilities = await this.getCapabilities(signal);
     if (!capabilities.comments) {
-      throw new AiCdlError({
-        code: "AI_CDL_EXCEL_CAPABILITY_UNSUPPORTED",
+      throw new SommelierError({
+        code: "SOMMELIER_EXCEL_CAPABILITY_UNSUPPORTED",
         message: "This Excel host does not support the comments requirement set.",
       });
     }

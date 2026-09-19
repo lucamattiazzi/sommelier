@@ -1,0 +1,44 @@
+{
+  "name": "@lucamattiazzi/sommelier-client",
+  "version": "0.2.0-beta.1",
+  "description": "Local pairing runtime and relay bindings for Sommelier",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --external @lucamattiazzi/sommelier-protocol --external @lucamattiazzi/sommelier-transport --external @lucamattiazzi/sommelier-addin-core",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@lucamattiazzi/sommelier-addin-core": "workspace:^",
+    "@lucamattiazzi/sommelier-protocol": "workspace:^",
+    "@lucamattiazzi/sommelier-transport": "workspace:^"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucamattiazzi/sommelier.git",
+    "directory": "packages/client"
+  },
+  "homepage": "https://github.com/lucamattiazzi/sommelier#readme",
+  "bugs": {
+    "url": "https://github.com/lucamattiazzi/sommelier/issues"
+  }
+}

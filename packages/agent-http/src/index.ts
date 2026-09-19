@@ -3,10 +3,10 @@ import {
   type AgentEvent,
   type AgentRunOptions,
   type AgentTurnRequest,
-  AiCdlError,
   agentEventSchema,
   PROTOCOL_VERSION,
-} from "@ai-cdl/core";
+  SommelierError,
+} from "@lucamattiazzi/sommelier-core";
 import { z } from "zod";
 
 /** HTTP adapter construction options. */
@@ -23,15 +23,15 @@ const responseSchema = z.object({
   events: z.array(agentEventSchema),
 });
 
-/** Stateless JSON transport for any agent implementing the documented AI-CDL protocol. */
+/** Stateless JSON transport for any agent implementing the documented Sommelier protocol. */
 export class HttpAgentAdapter implements AgentAdapter {
   readonly #options: HttpAgentAdapterOptions;
 
   constructor(options: HttpAgentAdapterOptions) {
     const endpoint = new URL(options.endpoint);
     if (!["http:", "https:"].includes(endpoint.protocol)) {
-      throw new AiCdlError({
-        code: "AI_CDL_HTTP_ENDPOINT_INVALID",
+      throw new SommelierError({
+        code: "SOMMELIER_HTTP_ENDPOINT_INVALID",
         message: "Agent endpoint must use HTTP or HTTPS.",
       });
     }
@@ -44,8 +44,8 @@ export class HttpAgentAdapter implements AgentAdapter {
     const timeout = setTimeout(
       () =>
         timeoutController.abort(
-          new AiCdlError({
-            code: "AI_CDL_HTTP_TIMEOUT",
+          new SommelierError({
+            code: "SOMMELIER_HTTP_TIMEOUT",
             message: `Agent request timed out after ${timeoutMs}ms.`,
           }),
         ),
@@ -69,8 +69,8 @@ export class HttpAgentAdapter implements AgentAdapter {
       });
       if (!response.ok) {
         const requestId = response.headers.get("x-request-id");
-        throw new AiCdlError({
-          code: "AI_CDL_HTTP_STATUS_ERROR",
+        throw new SommelierError({
+          code: "SOMMELIER_HTTP_STATUS_ERROR",
           message: `Agent endpoint returned HTTP ${response.status}.`,
           context: { status: response.status, ...(requestId ? { requestId } : {}) },
           probableCause:
@@ -85,8 +85,8 @@ export class HttpAgentAdapter implements AgentAdapter {
       try {
         payload = await response.json();
       } catch (error) {
-        throw new AiCdlError({
-          code: "AI_CDL_HTTP_MALFORMED_RESPONSE",
+        throw new SommelierError({
+          code: "SOMMELIER_HTTP_MALFORMED_RESPONSE",
           message: "Agent endpoint returned invalid JSON.",
           suggestedAction: "Return a JSON object containing protocolVersion and events.",
           cause: error,
@@ -94,15 +94,15 @@ export class HttpAgentAdapter implements AgentAdapter {
       }
       const parsed = responseSchema.safeParse(payload);
       if (!parsed.success) {
-        throw new AiCdlError({
-          code: "AI_CDL_HTTP_PROTOCOL_INVALID",
+        throw new SommelierError({
+          code: "SOMMELIER_HTTP_PROTOCOL_INVALID",
           message: "Agent endpoint response does not match protocol 0.1.",
           context: {
             issues: parsed.error.issues
               .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
               .join("; "),
           },
-          suggestedAction: "Validate the endpoint with `ai-cdl-contract --endpoint <url>`.",
+          suggestedAction: "Validate the endpoint with `sommelier-contract --endpoint <url>`.",
         });
       }
       for (const event of parsed.data.events) yield event;
@@ -110,14 +110,14 @@ export class HttpAgentAdapter implements AgentAdapter {
       if (signal.aborted) {
         const reason = signal.reason;
         if (reason instanceof Error) throw reason;
-        throw new AiCdlError({
-          code: "AI_CDL_HTTP_CANCELLED",
+        throw new SommelierError({
+          code: "SOMMELIER_HTTP_CANCELLED",
           message: "Agent request was cancelled.",
         });
       }
-      if (error instanceof AiCdlError) throw error;
-      throw new AiCdlError({
-        code: "AI_CDL_HTTP_NETWORK_ERROR",
+      if (error instanceof SommelierError) throw error;
+      throw new SommelierError({
+        code: "SOMMELIER_HTTP_NETWORK_ERROR",
         message: "Could not reach the agent endpoint.",
         probableCause: "The endpoint is unavailable, blocked by CORS, or has a TLS/network error.",
         suggestedAction: "Verify the URL, certificate, CORS policy, and network connectivity.",

@@ -12,7 +12,7 @@ and an optional automatic reconnection preference. Up to 20 named terminals can 
 There is no public endpoint that enumerates other users' terminals. Saved entries are shown as
 **Saved terminal**, not as online until authenticated. Only one automatic connection is selected.
 
-The bridge stores named profiles under `~/.ai-cdl-pair` (`AI_CDL_PAIR_HOME` can override the path).
+The bridge stores named profiles under `~/.sommelier` (`SOMMELIER_HOME` can override the path).
 Directories use mode 0700 and atomic profile files mode 0600 on macOS/Linux. `start --name desk`
 reuses a running bridge or restarts it with its saved credential. `list` never returns credentials.
 `stop` retains the association; `forget` deletes it. The Unix control socket also uses owner-only
@@ -83,19 +83,19 @@ share one maintained implementation. It must be rebuilt after transport changes.
 The relay sees UID, a routing capability, roles, source IPs, connection timing and frame lengths.
 It can interrupt, withhold or reorder traffic; this causes failure, not successful decryption.
 Endpoint code decrypts cells, prompts, agent answers and tool results. The chosen harness controls
-any subsequent transfer to its model provider. Pair does not call that provider on the user's behalf.
+any subsequent transfer to its model provider. Sommelier does not call that provider on the user's behalf.
 
 The task pane and bridge code must be trusted. End-to-end encryption cannot protect against an
 operator that also changes the client JavaScript to steal secrets. For protection from a malicious
 relay operator, host the pane independently under a trusted origin and install a reviewed bridge
 from a trusted distribution. The supplied deployment serves both from the same application host,
 so it protects against passive relay inspection, not a malicious replacement of client assets.
-For that deployment, set `PAIR_ADDIN_ORIGIN=https://trusted-pane.example` on the relay and build the
+For that deployment, set `SOMMELIER_ADDIN_ORIGIN=https://trusted-pane.example` on the relay and build the
 pane with `VITE_PAIR_RELAY_ORIGIN=https://relay.example`. The relay permits the configured pane
 origin for WebSocket connections and config CORS. Only the trusted pane operator should control
 client assets; installing a trusted bridge does not make a maliciously served pane safe.
 
-The first setup includes a secret. The native `ai-cdl-pair-agent pair` command accepts it at a
+The first setup includes a secret. The native `sommelier pair` command accepts it at a
 local terminal prompt and stores it without submitting it to a model. The skill-only fallback
 still exposes the setup to a model if the user pastes it into an agent chat; do not claim that
 fallback hides the initial credential from the provider/history.

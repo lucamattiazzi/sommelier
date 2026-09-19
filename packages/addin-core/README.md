@@ -1,10 +1,10 @@
-# @ai-cdl/addin-core
+# @lucamattiazzi/sommelier-addin-core
 
-Host-agnostic controller that executes AI-CDL protocol methods through an Excel adapter.
+Host-agnostic controller that executes Sommelier protocol methods through an Excel adapter.
 
 
 
-Pair controller defaults: 10,000 cells per read, 1,000 per mutation, and 100 retained operations.
+Sommelier controller defaults: 10,000 cells per read, 1,000 per mutation, and 100 retained operations.
 Options `maxCellsPerRead`, `maxCellsPerWrite`, and `maxOperations` accept positive safe integers.
 The current table adapter loads the whole table before slicing, so the read limit applies to its full range.
 

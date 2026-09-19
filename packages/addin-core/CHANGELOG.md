@@ -1,4 +1,11 @@
-# @ai-cdl/addin-core
+# @lucamattiazzi/sommelier-addin-core
+
+## 0.2.0-beta.1
+
+### Patch Changes
+
+- @lucamattiazzi/sommelier-excel@0.2.0-beta.1
+- @lucamattiazzi/sommelier-protocol@0.2.0-beta.1
 
 ## 0.2.0-beta.0
 
@@ -15,5 +22,5 @@
 ### Patch Changes
 
 - Updated dependencies [5c48cc5]
-  - @ai-cdl/protocol@0.2.0-beta.0
-  - @ai-cdl/excel@0.2.0-beta.0
+  - @lucamattiazzi/sommelier-protocol@0.2.0-beta.0
+  - @lucamattiazzi/sommelier-excel@0.2.0-beta.0

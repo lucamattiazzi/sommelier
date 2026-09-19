@@ -1,7 +1,7 @@
 {
-  "name": "@ai-cdl/transport",
-  "version": "0.2.0-beta.0",
-  "description": "Transport lifecycle and message delivery for AI-CDL",
+  "name": "@lucamattiazzi/sommelier-transport",
+  "version": "0.2.0-beta.1",
+  "description": "Transport lifecycle and message delivery for Sommelier",
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -23,20 +23,20 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --external @ai-cdl/protocol",
+    "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --external @lucamattiazzi/sommelier-protocol",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
-    "@ai-cdl/protocol": "workspace:^"
+    "@lucamattiazzi/sommelier-protocol": "workspace:^"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair.git",
+    "url": "https://github.com/lucamattiazzi/sommelier.git",
     "directory": "packages/transport"
   },
-  "homepage": "https://github.com/lucamattiazzi/ai-cdl-pair#readme",
+  "homepage": "https://github.com/lucamattiazzi/sommelier#readme",
   "bugs": {
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair/issues"
+    "url": "https://github.com/lucamattiazzi/sommelier/issues"
   }
 }

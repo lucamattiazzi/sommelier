@@ -1,4 +1,4 @@
-import type { JsonValue } from "@ai-cdl/core";
+import type { JsonValue } from "@lucamattiazzi/sommelier-core";
 
 /** Cell value accepted by bounded workbook operations. */
 export type CellValue = string | number | boolean | null;

@@ -4,16 +4,16 @@
   "commit": false,
   "fixed": [
     [
-      "@ai-cdl/addin-core",
-      "@ai-cdl/agent-http",
-      "@ai-cdl/cli",
-      "@ai-cdl/core",
-      "@ai-cdl/excel",
-      "@ai-cdl/pair",
-      "@ai-cdl/pair-cli",
-      "@ai-cdl/protocol",
-      "@ai-cdl/testing",
-      "@ai-cdl/transport"
+      "@lucamattiazzi/sommelier-addin-core",
+      "@lucamattiazzi/sommelier-agent-http",
+      "@lucamattiazzi/sommelier-config",
+      "@lucamattiazzi/sommelier-core",
+      "@lucamattiazzi/sommelier-excel",
+      "@lucamattiazzi/sommelier-client",
+      "@lucamattiazzi/sommelier",
+      "@lucamattiazzi/sommelier-protocol",
+      "@lucamattiazzi/sommelier-testing",
+      "@lucamattiazzi/sommelier-transport"
     ]
   ],
   "linked": [],

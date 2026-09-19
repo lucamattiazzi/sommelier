@@ -1,4 +1,4 @@
-import type { JsonValue, PROTOCOL_VERSION, SerializedAiCdlError } from "./protocol.js";
+import type { JsonValue, PROTOCOL_VERSION, SerializedSommelierError } from "./protocol.js";
 import type { SessionState } from "./state.js";
 import type { ToolPreview } from "./tool.js";
 
@@ -34,7 +34,7 @@ export type SessionEventBody =
     }
   | {
       readonly type: "tool.failed";
-      readonly payload: { readonly name: string; readonly error: SerializedAiCdlError };
+      readonly payload: { readonly name: string; readonly error: SerializedSommelierError };
     }
   | {
       readonly type: "approval.requested";
@@ -50,7 +50,10 @@ export type SessionEventBody =
     }
   | { readonly type: "turn.completed"; readonly payload: { readonly assistantMessage: string } }
   | { readonly type: "turn.cancelled"; readonly payload: { readonly reason: string } }
-  | { readonly type: "turn.failed"; readonly payload: { readonly error: SerializedAiCdlError } };
+  | {
+      readonly type: "turn.failed";
+      readonly payload: { readonly error: SerializedSommelierError };
+    };
 
 /** JSON-serializable session event stream. */
 export type SessionEvent = SessionEventEnvelope & SessionEventBody;

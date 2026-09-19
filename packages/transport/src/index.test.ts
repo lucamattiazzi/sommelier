@@ -1,4 +1,4 @@
-import { PROTOCOL_VERSION, type ProtocolMessage } from "@ai-cdl/protocol";
+import { PROTOCOL_VERSION, type ProtocolMessage } from "@lucamattiazzi/sommelier-protocol";
 import { describe, expect, it } from "vitest";
 import { createInMemoryTransportPair } from "./index.js";
 

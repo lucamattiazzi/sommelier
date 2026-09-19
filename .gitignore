@@ -10,6 +10,6 @@ artifacts/
 .vite/
 .office-addin-dev-certs/
 
-skills/ai-cdl-pair/scripts/lib/
+skills/sommelier/scripts/lib/
 playwright-report/
 test-results/

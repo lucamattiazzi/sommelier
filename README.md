@@ -1,4 +1,6 @@
-# AI-CDL Pair
+# Sommelier
+
+**Excels at pairing.** Your Excel workbook. Your AI agent. Together.
 
 ## Beta harness adapters
 
@@ -12,28 +14,28 @@ Workbook traffic is encrypted end-to-end; the hosted relay cannot read payloads.
 
 Connect a coding harness to the workbook open in Excel. The user chats in the add-in; the harness
 uses a persistent WebSocket session to inspect bounded ranges and propose workbook changes.
-Pair includes the Excel add-in, relay server, local relay CLI, reusable TypeScript libraries, and
+Sommelier includes the Excel add-in, relay server, local relay CLI, reusable TypeScript libraries, and
 an Agent Skill for shell-capable harnesses such as OpenCode.
 
-This is an independent Apache-2.0 workspace extracted from AI-CDL. It contains no enterprise
-runtime, tenant authentication/authorization integration, enterprise prospect material, eval
-runner, or currency/commodity demo. Existing `@ai-cdl/*` package names and public APIs are preserved.
-Source: [lucamattiazzi/ai-cdl-pair](https://github.com/lucamattiazzi/ai-cdl-pair).
+Sommelier is an independent Apache-2.0 project, formerly AI-CDL Pair. Its public packages now use
+`@lucamattiazzi/sommelier` and `@lucamattiazzi/sommelier-*`; the original `@ai-cdl/*` releases remain
+available. See [migration](docs/migration-to-sommelier.md) and [source provenance](docs/extraction.md).
+Source: [lucamattiazzi/sommelier](https://github.com/lucamattiazzi/sommelier).
 This beta has not been approved for the Microsoft Marketplace. See the release readiness notes
 for the remaining real Excel and harness validation.
 
 ## Use a hosted instance
 
 Install the add-in supplied by your service operator, or deploy your own instance with the
-[Docker/self-hosting guide](deploy/pair/README.md). End users only run the local harness adapter;
-the Pair server runs on the operator's infrastructure.
+[Docker/self-hosting guide](deploy/sommelier/README.md). End users only run the local harness adapter;
+the Sommelier server runs on the operator's infrastructure.
 
 Install the published beta from npm:
 
 ```sh
-npm install -g @ai-cdl/pair-cli@beta
-ai-cdl-pair-agent pair --name desk
-ai-cdl-pair-agent codex --name desk
+npm install -g @lucamattiazzi/sommelier@beta
+sommelier pair --name desk
+sommelier codex --name desk
 # Or: opencode / claude
 ```
 
@@ -55,14 +57,14 @@ pnpm manifest:generate
 Run these in separate terminals from this directory:
 
 ```sh
-pnpm pair:server:dev
+pnpm server:dev
 ```
 
 ```sh
-pnpm pair:addin:dev
+pnpm addin:dev
 ```
 
-Sideload `apps/pair-addin/manifest.xml` in Excel. The add-in is served at
+Sideload `apps/addin/manifest.xml` in Excel. The add-in is served at
 `https://localhost:3000`; the development relay listens on `127.0.0.1:3001`. The Office development
 certificate may require trust on first use. A regular browser uses a synthetic in-memory workbook.
 
@@ -86,40 +88,40 @@ sends to a model provider. Read the [transport decision and trust boundaries](do
 including the need to trust the client code and the lack of forward secrecy.
 
 The [test guide](docs/pair-testing.md) covers actual Office testing. The portable skill is in
-[`skills/ai-cdl-pair`](skills/ai-cdl-pair/SKILL.md). Local browser verification and its screenshots are
-reproducible with `pnpm test:browser` after `pnpm pair:build` and `pnpm exec playwright install chromium`.
+[`skills/sommelier`](skills/sommelier/SKILL.md). Local browser verification and its screenshots are
+reproducible with `pnpm test:browser` after `pnpm sommelier:build` and `pnpm exec playwright install chromium`.
 
 ## Repository layout
 
 | Directory | Purpose |
 | --- | --- |
-| `apps/pair-addin` | React task pane, owned icons, Office manifest |
-| `apps/pair-server` | Static host and opaque encrypted WebSocket rendezvous |
-| `packages/pair` | Typed Pair client and add-in session binding |
-| `packages/pair-cli` | Loopback relay library and `ai-cdl-pair` executable |
+| `apps/addin` | React task pane, owned icons, Office manifest |
+| `apps/server` | Static host and opaque encrypted WebSocket rendezvous |
+| `packages/client` | Typed Sommelier client and add-in session binding |
+| `packages/bridge` | Loopback relay library and `sommelier` executable |
 | `packages/protocol`, `packages/transport` | Validated RPC 0.2 and transport lifecycle |
 | `packages/addin-core`, `packages/excel` | Approvals, bounded Excel tools, Office and memory adapters |
 | `packages/core`, `packages/agent-http` | Existing direct-agent mode using protocol 0.1 |
 | `packages/testing` | Synthetic workbook and contract helpers used by the add-in preview |
-| `packages/cli` | Manifest generation and packaging |
-| `skills/ai-cdl-pair` | Persistent bridge, RPC client, harness instructions |
-| `deploy/pair` | Docker/Caddy deployment configuration |
+| `packages/config` | Manifest generation and packaging |
+| `skills/sommelier` | Persistent bridge, RPC client, harness instructions |
+| `deploy/sommelier` | Docker/Caddy deployment configuration |
 
-The shared packages above are transitive dependencies of Pair. They are included so this checkout
+The shared packages above are transitive dependencies of Sommelier. They are included so this checkout
 builds without a sibling repository or unpublished packages from a registry. Relay authentication
-and workbook approval checks remain part of Pair.
+and workbook approval checks remain part of Sommelier.
 
 ## Library usage
 
-The public entry point is `@ai-cdl/pair`; its dependencies are separate publishable packages.
+The public entry point is `@lucamattiazzi/sommelier-client`; its dependencies are separate publishable packages.
 In a consumer that has installed the packages, Node.js 22+ can connect with:
 
 ```ts
-import { createPairClient } from "@ai-cdl/pair";
-import { createJsonSocketTransport, createEncryptedSocket, relaySocketUrl } from "@ai-cdl/transport";
+import { createPairClient } from "@lucamattiazzi/sommelier-client";
+import { createJsonSocketTransport, createEncryptedSocket, relaySocketUrl } from "@lucamattiazzi/sommelier-transport";
 
-const pairUrl = process.env.AI_CDL_PAIR_URL;
-if (!pairUrl) throw new Error("AI_CDL_PAIR_URL is required.");
+const pairUrl = process.env.SOMMELIER_URL;
+if (!pairUrl) throw new Error("SOMMELIER_URL is required.");
 
 const client = createPairClient({
   transport: createJsonSocketTransport(createEncryptedSocket(new WebSocket(relaySocketUrl(pairUrl)), pairUrl)),
@@ -141,14 +143,14 @@ try {
 ```
 
 For an interactive harness, use the skill's persistent bridge instead of opening a connection per
-request. See [RPC methods](skills/ai-cdl-pair/references/protocol.md). Direct-agent endpoints instead
+request. See [RPC methods](skills/sommelier/references/protocol.md). Direct-agent endpoints instead
 use the [HTTP 0.1 contract](docs/agent-protocol.md).
 
 ## Verification and publication
 
 ```sh
 pnpm test:isolation
-pnpm pair:test
+pnpm test:pairing
 pnpm smoke:packages
 pnpm smoke:consumer
 ```

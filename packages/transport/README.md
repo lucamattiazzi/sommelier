@@ -1,8 +1,8 @@
-# @ai-cdl/transport
+# @lucamattiazzi/sommelier-transport
 
-Transport-neutral lifecycle and validated protocol message delivery for AI-CDL.
+Transport-neutral lifecycle and validated protocol message delivery for Sommelier.
 
-## End-to-end encrypted Pair sockets
+## End-to-end encrypted Sommelier sockets
 
 `createPairIdentity()` creates a random UID and a separate 256-bit secret. `pairConnectionUrl(origin,
 identity, role)` derives a routing capability and keeps the encryption secret in the URL fragment.

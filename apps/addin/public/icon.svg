@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-label="Sommelier">
+  <rect width="80" height="80" rx="16" fill="#163b30"/>
+  <path d="M24 16h32v17c0 10-7 17-16 17s-16-7-16-17V16Z" fill="none" stroke="#f6ecd4" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M25 30h30M25 39h30M35 17v29M45 17v29" stroke="#f6ecd4" stroke-width="2.5"/>
+  <path d="M40 51v13M29 65h22" stroke="#f6ecd4" stroke-width="4.5" stroke-linecap="round"/>
+</svg>

@@ -1,7 +1,7 @@
 {
-  "name": "@ai-cdl/protocol",
-  "version": "0.2.0-beta.0",
-  "description": "Provider-independent AI-CDL vNext protocol types and runtime schemas",
+  "name": "@lucamattiazzi/sommelier-protocol",
+  "version": "0.2.0-beta.1",
+  "description": "Provider-independent Sommelier vNext protocol types and runtime schemas",
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -32,11 +32,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair.git",
+    "url": "https://github.com/lucamattiazzi/sommelier.git",
     "directory": "packages/protocol"
   },
-  "homepage": "https://github.com/lucamattiazzi/ai-cdl-pair#readme",
+  "homepage": "https://github.com/lucamattiazzi/sommelier#readme",
   "bugs": {
-    "url": "https://github.com/lucamattiazzi/ai-cdl-pair/issues"
+    "url": "https://github.com/lucamattiazzi/sommelier/issues"
   }
 }

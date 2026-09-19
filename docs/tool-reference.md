@@ -1,11 +1,11 @@
 # Excel tool reference
 
-## Pair RPC 0.2 / native adapters
+## Sommelier RPC 0.2 / native adapters
 
-The TaskPane and native adapters use the [RPC reference](../skills/ai-cdl-pair/references/protocol.md).
+The TaskPane and native adapters use the [RPC reference](../skills/sommelier/references/protocol.md).
 MCP names replace dots with underscores: `excel.range.read` becomes `excel_range_read`. Discover
 all schemas through MCP `tools/list` and read `excel_guide` for examples, including approved chart
-creation and listing. The legacy tools below are a separate API; they are not all available in Pair.
+creation and listing. The legacy tools below are a separate API; they are not all available in Sommelier.
 
 ## Legacy driver tools
 
