@@ -30,18 +30,17 @@ Install the add-in supplied by your service operator, or deploy your own instanc
 [Docker/self-hosting guide](deploy/sommelier/README.md). End users only run the local harness adapter;
 the Sommelier server runs on the operator's infrastructure.
 
-Install the published beta from npm:
+In the TaskPane choose **Copy agent prompt** and paste it into your existing agent. No skill
+installation is required: the prompt contains the local bridge bootstrap, workbook RPC examples,
+approval workflow and chat loop. Requires Node.js 22.12+ and an agent with shell access.
+The prompt includes a private connection key, which is shared with the chosen agent/provider.
 
-```sh
-npm install -g @lucamattiazzi/sommelier@beta
-sommelier pair --name desk
-sommelier codex --name desk
-# Or: opencode / claude
-```
+The connection receives a default name. Once connected, use **Options → Connection name** to rename
+it. Chat fills the pane; connection settings, workbook context and recent operations stay in Options.
+A stopped agent must resume listening before it can receive TaskPane messages.
 
-Paste the private connection URL from Excel once, at the local pairing prompt. The URL selects the
-server and is remembered. There is no fixed hosted domain: self-hosting uses the same adapter and
-E2EE protocol. For installation from source, see [adapter setup](docs/harness-adapters.md).
+The portable skill is optional for subsequent reconnections. Native adapters remain available as
+an alternative; see [adapter setup](docs/harness-adapters.md). There is no fixed hosted domain.
 
 ## Local development
 
@@ -68,20 +67,31 @@ Sideload `apps/addin/manifest.xml` in Excel. The add-in is served at
 `https://localhost:3000`; the development relay listens on `127.0.0.1:3001`. The Office development
 certificate may require trust on first use. A regular browser uses a synthetic in-memory workbook.
 
-Install the portable integration for your harness once:
+If port 3001 is occupied, set the same relay port in both development terminals:
+
+```sh
+SOMMELIER_RELAY_PORT=3002 pnpm server:dev
+# In a separate terminal:
+SOMMELIER_RELAY_PORT=3002 pnpm addin:dev
+```
+
+The TaskPane stays on port 3000, so its manifest does not change. The proxy and new pairing URLs
+use the chosen relay port. Pair again if you previously saved a local connection using another port.
+
+Optionally install the portable skill for later reconnections:
 
 ```sh
 pnpm harness:install opencode
 # Or: codex, claude, pi
 ```
 
-In the pane, name your terminal and choose **Pair a terminal**. Run `pnpm agent pair --name desk`
-and paste **Copy connection URL** at its local prompt. Start `pnpm agent codex --name desk` (or
-`opencode` / `claude`, with the prerequisites in the adapter guide). The pane saves the connection
-after mutual authentication. On later openings, start the same adapter and click **Reconnect**;
-its native conversation is remembered too. Optional automatic connection applies on pane open.
-The portable skill remains a fallback that must be invoked again if its agent stops waiting.
-
+In the pane, choose **Copy agent prompt** and paste it into the agent already running in your
+terminal. The agent starts the standalone bridge and listens for TaskPane requests; no preinstalled
+skill or second harness process is required. After the agent connects, use the chat in Excel.
+The pane saves the connection after mutual authentication. Later, resume the bridge and agent
+listener and use **Options → Saved terminals → Reconnect**. The optional skill can handle that
+local reconnection without another setup prompt. Auto-connect only reconnects the pane; it cannot
+wake a stopped agent.
 Workbook RPC, chat and tool results are end-to-end encrypted between pane and bridge. The server
 routes opaque frames and sees connection metadata. The selected agent separately controls what it
 sends to a model provider. Read the [transport decision and trust boundaries](docs/secure-pairing.md),

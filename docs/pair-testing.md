@@ -1,11 +1,11 @@
 # Provare Sommelier
 
 Stato: **preview per test personali**, non una release Marketplace.
-Questa estrazione autonoma non pubblica pacchetti npm e non distribuisce un servizio.
+I pacchetti beta sono pubblicati su npm. Il servizio va avviato in sviluppo oppure sul proprio server.
 
 ## Avvio locale
 
-Prerequisiti: Node.js 22+ e pnpm tramite Corepack. Dalla radice del checkout:
+Prerequisiti: Node.js 22.12+ e pnpm tramite Corepack. Dalla radice del checkout:
 
 ```sh
 corepack enable
@@ -34,20 +34,19 @@ Aprendo l'URL in un browser normale usi solo un workbook sintetico in memoria: n
 
 ## Collegare il tuo coding agent
 
-1. Installa la skill dal checkout: `pnpm bridge:build`, poi `pnpm harness:install opencode` (oppure `codex`, `claude`, `pi`).
-2. Apri il task pane nel workbook di prova e lascia disattivata l'approvazione automatica.
-3. Assegna un nome al terminale, premi **Pair a terminal** e copia il setup iniziale nella skill del tuo agente.
-4. Attendi **Connected · end-to-end encrypted**: il terminale viene salvato dopo l'autenticazione reciproca.
-5. Alla riapertura avvia la skill nel terminale e premi **Reconnect** nel task pane. Non serve un nuovo URL.
-6. L'opzione di riconnessione automatica riguarda l'apertura del pane, non l'approvazione delle scritture.
+1. Apri il TaskPane: mostra le istruzioni e **Copy agent prompt**, senza chiedere un nome.
+2. Copia il prompt e incollalo nella sessione del tuo agente. Non serve installare o leggere una skill.
+   Il prompt avvia il bridge Node locale e contiene comandi RPC, approvazioni e ciclo di ascolto.
+3. Attendi **Connected · end-to-end encrypted**: compare la chat, con il campo di invio sempre visibile.
+4. In **Options → Connection name** puoi cambiare il nome predefinito. Contesto, connessioni e
+   cronologia sono nelle opzioni; lascia disattivata l'approvazione automatica per questi test.
+5. Alla riapertura, riprendi bridge e ascolto nell'agente e usa **Options → Saved terminals → Reconnect**.
+   La skill opzionale può gestire questo passaggio senza ripetere il prompt iniziale.
 
-In sviluppo agente e relay condividono la stessa macchina (`127.0.0.1`). Per altri dispositivi servono
-origine HTTPS/WSS, certificato e manifest coerenti. La skill deve continuare a consumare i messaggi:
-un bridge connesso non può risvegliare da solo un agente inattivo.
-
-Il setup contiene un segreto persistente: non inserirlo in issue, commit o screenshot. Se lo incolli
-in una chat, il provider dell'harness potrebbe riceverlo; ciò è distinto dalla riservatezza del relay.
-Vedi [architettura e limiti](secure-pairing.md).
+In sviluppo agente e relay condividono la macchina. Per altri dispositivi servono origine HTTPS/WSS,
+certificato e manifest coerenti. Un bridge connesso non risveglia un agente che ha smesso di ascoltare.
+Il prompt contiene una chiave privata: incollandolo all'agente può finire nel contesto del suo provider.
+Non inserirlo in issue, commit o screenshot condivisi. Vedi [architettura e limiti](secure-pairing.md).
 
 Test automatico dell'intero flusso su workbook sintetico, dopo la build:
 

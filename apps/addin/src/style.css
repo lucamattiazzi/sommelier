@@ -287,15 +287,6 @@ footer {
   border-radius: 3px;
   border: 1px solid #9baca3;
 }
-.pairing-ticket {
-  border-top: 1px solid #cad3cd;
-  padding-top: 14px;
-  display: grid;
-  gap: 9px;
-}
-.pairing-ticket button {
-  justify-self: start;
-}
 .toggle {
   display: flex;
   gap: 8px;
@@ -480,16 +471,7 @@ summary {
 .relay-panel {
   gap: 16px;
 }
-.privacy-note {
-  color: #245e43;
-  background: #dfeee3;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-.terminal-list,
-.new-terminal {
+.terminal-list {
   display: grid;
   gap: 10px;
 }
@@ -603,4 +585,96 @@ main > .text-button {
   border-radius: 6px;
   background: #fff;
   color: #173e2c;
+}
+
+/* Keep the live conversation and composer inside the TaskPane viewport. */
+.relay-workspace {
+  height: 100dvh;
+  min-height: 0;
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden;
+}
+.relay-workspace > * {
+  flex-shrink: 0;
+}
+.relay-workspace .product-header {
+  padding-bottom: 8px;
+}
+.relay-workspace .demo-banner {
+  padding: 5px 8px;
+  font-size: 11px;
+}
+.relay-workspace .relay-panel {
+  padding: 16px;
+  gap: 12px;
+  min-height: 0;
+  overflow-y: auto;
+  flex-shrink: 1;
+}
+.relay-workspace .relay-panel h2 {
+  font-size: 21px;
+}
+.relay-workspace .relay-panel p {
+  line-height: 1.45;
+}
+.connection-status {
+  color: #aec1b5;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.relay-workspace .conversation {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.relay-workspace .empty {
+  padding: 12px 0;
+}
+.relay-workspace .empty h2 {
+  font-size: 21px;
+}
+.relay-workspace .empty p {
+  color: #aec1b5;
+  font-size: 13px;
+}
+.relay-workspace .composer textarea {
+  max-height: 120px;
+}
+.pane-options {
+  border-top: 1px solid #345246;
+  max-height: 45vh;
+  overflow-y: auto;
+  font-size: 12px;
+}
+.onboarding .pane-options {
+  margin-top: auto;
+}
+.options-content {
+  display: grid;
+  gap: 12px;
+  padding: 8px 2px;
+}
+.options-content > label,
+.options-content .toggle span {
+  color: #c2d0c7;
+}
+.options-content input:not([type="checkbox"]) {
+  margin-top: 6px;
+}
+.options-content .terminal-card {
+  color: #14241e;
+  padding: 10px;
+  gap: 8px;
+}
+.options-content .terminal-card .toggle span {
+  color: #455c4e;
+}
+.options-content .operation-history,
+.options-content .context-panel {
+  padding: 8px;
+}
+.options-content > .text-button {
+  color: #c2d0c7;
 }

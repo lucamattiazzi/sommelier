@@ -32,26 +32,50 @@ test(
     delete environment.SOMMELIER_URL;
     delete environment.SOMMELIER_SESSION;
     const bridge = (args, url) =>
-      run(process.execPath, ["skills/sommelier/scripts/session.mjs", ...args], {
-        env: { ...environment, ...(url ? { SOMMELIER_URL: url } : {}) },
-      }).then(({ stdout }) => JSON.parse(stdout));
+      run(
+        process.execPath,
+        [process.env.SOMMELIER_TEST_BRIDGE ?? "skills/sommelier/scripts/session.mjs", ...args],
+        {
+          env: { ...environment, ...(url ? { SOMMELIER_URL: url } : {}) },
+        },
+      ).then(({ stdout }) => JSON.parse(stdout));
     const rpc = (method, params) =>
       bridge(["request", "--name", "desk", "--method", method, "--params", JSON.stringify(params)]);
-    const page = await browser.newPage({ viewport: { width: 320, height: 900 } });
+    const page = await browser.newPage({ viewport: { width: 320, height: 640 } });
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, "clipboard", {
+        value: {
+          writeText: async (text) => {
+            window.copiedSetupPrompt = text;
+          },
+        },
+      });
+    });
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
     // A browser preview deliberately uses the in-memory adapter, without the Office bootstrap.
     await page.route("https://appsforoffice.microsoft.com/**", (route) => route.abort());
     try {
       await page.goto(origin);
-      await expect(page.getByRole("heading", { name: "Connect your terminal" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Connect your agent" })).toBeVisible();
       await mkdir("artifacts/pair-review", { recursive: true });
       await page.screenshot({ path: "artifacts/pair-review/initial-320.png", fullPage: true });
-      await page.getByLabel("Name this terminal").fill("Codex · Synthetic desk");
-      await page.getByRole("button", { name: "Pair a terminal", exact: true }).click();
-      await expect(page.getByRole("button", { name: "Copy connection URL" })).toBeVisible();
+      await expect(page.getByRole("textbox")).toHaveCount(0);
+      await page.getByRole("button", { name: "Copy agent prompt", exact: true }).click();
+      await expect(
+        page.getByText("Prompt copied. Paste it into your agent.", { exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: "Copy agent prompt", exact: true }),
+      ).toBeVisible();
+      await page.getByText("Show prompt", { exact: true }).click();
+      const prompt = await page.getByLabel("Prompt for your agent", { exact: true }).inputValue();
+      assert.ok(prompt.includes("@lucamattiazzi/sommelier@0.2.0-beta.1"));
+      assert.equal(await page.evaluate(() => window.copiedSetupPrompt), prompt);
+      assert.ok(!prompt.includes("SKILL.md"));
       await page.screenshot({ path: "artifacts/pair-review/pairing-320.png", fullPage: true });
-      const url = await page.getByLabel("Private connection URL", { exact: true }).inputValue();
+      const url = prompt.match(/wss?:\/\/[^\s]+/)[0];
+      await page.getByText("Show prompt", { exact: true }).click();
       await bridge(["start", "--name", "desk"], url);
       await expect(
         page.getByText("Connected · end-to-end encrypted", { exact: true }),
@@ -103,12 +127,29 @@ test(
         (await rpc("excel.chart.list", { sheetId: "Sheet1" })).result.charts[0].name,
         "Sales",
       );
+      await page.getByText("Options", { exact: true }).click();
       await page.getByText("Recent operations (2)", { exact: true }).click();
       await expect(page.getByRole("button", { name: "Undo", exact: true })).toHaveCount(1);
+      await page.getByText("Options", { exact: true }).click();
       await bridge(["reply", "--name", "desk", "--content", "Updated the synthetic amount to 42."]);
       await expect(
         page.getByText("Updated the synthetic amount to 42.", { exact: true }),
       ).toBeVisible();
+      for (let i = 0; i < 8; i++) {
+        await bridge([
+          "reply",
+          "--name",
+          "desk",
+          "--content",
+          `Synthetic message ${i}. `.repeat(20),
+        ]);
+      }
+      await expect(page.getByText(/Synthetic message 7/)).toBeInViewport();
+      await expect(page.getByRole("button", { name: "Send", exact: true })).toBeInViewport();
+      assert.equal(
+        await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight),
+        true,
+      );
       await page.screenshot({ path: "artifacts/pair-review/connected-320.png", fullPage: true });
       assert.equal(
         await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
@@ -118,14 +159,20 @@ test(
         JSON.parse(localStorage.getItem("ai-cdl-pair-terminals-v1")),
       );
       assert.equal(saved.length, 1);
-      assert.equal(saved[0].name, "Codex · Synthetic desk");
+      assert.equal(saved[0].name, "My terminal");
+      await page.getByText("Options", { exact: true }).click();
+      await page.getByLabel("Connection name", { exact: true }).fill("Codex · Synthetic desk");
+      await page.getByLabel("Connection name", { exact: true }).press("Tab");
       await page.reload();
+      await page.getByText("Options", { exact: true }).click();
+      await expect(page.getByText("Codex · Synthetic desk", { exact: true })).toBeVisible();
       await expect(page.getByRole("button", { name: "Reconnect", exact: true })).toBeVisible();
       await expect(page.getByRole("button", { name: "Copy connection URL" })).toHaveCount(0);
       await page.getByRole("button", { name: "Reconnect", exact: true }).click();
       await expect(
         page.getByText("Connected · end-to-end encrypted", { exact: true }),
       ).toBeVisible();
+      await page.getByText("Options", { exact: true }).click();
       await page.getByText("Manage connection", { exact: true }).click();
       await page.getByLabel("Connect automatically when this pane opens").check();
       await page
@@ -140,6 +187,7 @@ test(
           "Approve changes automatically for this connection only. Previews still run.",
         ),
       ).not.toBeChecked();
+      await page.getByText("Options", { exact: true }).click();
       await page.getByText("Manage connection", { exact: true }).click();
       await page.getByRole("button", { name: "Forget", exact: true }).click();
       await expect(page.getByRole("button", { name: "Reconnect", exact: true })).toHaveCount(0);
@@ -149,6 +197,14 @@ test(
         ),
         0,
       );
+      await page.evaluate(() => {
+        navigator.clipboard.writeText = async () => {
+          throw new Error("Clipboard blocked");
+        };
+      });
+      await page.getByRole("button", { name: "Copy agent prompt", exact: true }).click();
+      await expect(page.getByRole("alert")).toContainText("Select and copy the prompt below");
+      await expect(page.getByLabel("Prompt for your agent", { exact: true })).toBeVisible();
       assert.deepEqual(errors, []);
       for (const path of [
         "/setup.html",

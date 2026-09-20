@@ -224,6 +224,7 @@ interface ChatMessage {
 
 function RelayMode({ disconnect }: RelayModeProps) {
   const agentPromptId = useId();
+  const [promptVisible, setPromptVisible] = useState(false);
   const [pairing, setPairing] = useState<TerminalPairing>();
   const [terminals, setTerminals] = useState<SavedTerminal[]>(() => {
     try {
@@ -296,7 +297,10 @@ function RelayMode({ disconnect }: RelayModeProps) {
   }, []);
 
   const createPairing = useCallback(
-    async (existing?: SavedTerminal, name = "My terminal"): Promise<void> => {
+    async (
+      existing?: SavedTerminal,
+      name = "My terminal",
+    ): Promise<TerminalPairing | undefined> => {
       const currentAttempt = ++attempt.current;
       setConnecting(true);
       setError("");
@@ -473,6 +477,7 @@ function RelayMode({ disconnect }: RelayModeProps) {
         setSelection({ sheetId: context.selection.worksheet, address: context.selection.range });
         setPairing(created);
         if (!peerPresent) setStatus("Waiting for the authorized terminal");
+        return created;
       } catch (failure) {
         if (currentAttempt !== attempt.current) return;
         await stopCurrent();
@@ -488,6 +493,7 @@ function RelayMode({ disconnect }: RelayModeProps) {
   useEffect(() => {
     const automatic = terminalsRef.current.find((record) => record.autoConnect);
     if (automatic) void createPairing(automatic);
+    else void createPairing();
     return () => {
       attempt.current += 1;
       void stopCurrent();
@@ -496,10 +502,8 @@ function RelayMode({ disconnect }: RelayModeProps) {
 
   useEffect(() => {
     if (messages.length === 0) return;
-    transcriptEnd.current?.scrollIntoView({
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-      block: "end",
-    });
+    const conversation = transcriptEnd.current?.parentElement;
+    conversation?.scrollTo({ top: conversation.scrollHeight, behavior: "instant" });
   }, [messages.length]);
 
   const resolveApproval = (approved: boolean): void => {
@@ -532,12 +536,16 @@ function RelayMode({ disconnect }: RelayModeProps) {
     }
   };
   const copyAgentPrompt = async (): Promise<void> => {
-    if (!pairing) return;
+    const active =
+      pairing && lifecycle.current ? pairing : await createPairing(pairing?.terminal, terminalName);
+    if (!active) return;
     try {
-      await navigator.clipboard.writeText(terminalSetupPrompt(pairing.agentUrl));
-      setStatus("Setup copied. Paste it once in the terminal you want to remember.");
+      await navigator.clipboard.writeText(terminalSetupPrompt(active.agentUrl));
+      setStatus("Prompt copied. Paste it into your agent.");
+      setError("");
     } catch {
-      setError("Select and copy the prompt manually; clipboard access is unavailable.");
+      setPromptVisible(true);
+      setError("Clipboard unavailable. Select and copy the prompt below.");
     }
   };
   const togglePinned = (): void => {
@@ -563,220 +571,62 @@ function RelayMode({ disconnect }: RelayModeProps) {
   const contextRange = pinned ?? selection;
 
   return (
-    <main>
-      <ProductHeader status="External agent" disconnect={disconnect} />
+    <main className={agentConnected ? "relay-workspace connected" : "relay-workspace onboarding"}>
+      <ProductHeader status={agentConnected ? "Connected" : "Connect"} disconnect={disconnect} />
       {typeof Excel === "undefined" && (
-        <p className="demo-banner">
-          Browser demo: operations affect synthetic data only. Open this add-in in Excel to use your
-          workbook.
-        </p>
+        <p className="demo-banner">Browser preview · sample workbook</p>
       )}
-      <section className="relay-panel">
-        <span className="eyebrow">Your workbook. Your agent.</span>
-        <h2>{agentConnected ? pairing?.terminal.name : "Connect your terminal"}</h2>
-        <p>
-          Excels at pairing. Use your existing agent in OpenCode, Codex or Claude Code. Sommelier
-          remembers the terminals you authorize.
-        </p>
-        <div className="privacy-note">
-          End-to-end encrypted · Sommelier relays cannot read workbook data or conversations.
-        </div>
-        {terminals.length > 0 && (
-          <details className="connection-settings" open={!agentConnected}>
-            <summary>{agentConnected ? "Manage connection" : "Saved terminals"}</summary>
-            <section className="terminal-list" aria-label="Authorized terminals">
-              {terminals.map((terminal) => {
-                const connected = pairing?.terminal.id === terminal.id && agentConnected;
-                return (
-                  <div className="terminal-card" key={terminal.id}>
-                    <div className="terminal-title">
-                      <strong>{terminal.name}</strong>
-                      <small>{connected ? "Connected" : "Saved terminal"}</small>
-                    </div>
-                    <div className="button-row">
-                      <button
-                        className={connected ? "secondary" : "primary"}
-                        type="button"
-                        disabled={connecting || !!approval || !!question}
-                        onClick={() => {
-                          if (connected) {
-                            attempt.current += 1;
-                            void stopCurrent();
-                            setAgentConnected(false);
-                            setPairing(undefined);
-                            setStatus("Disconnected");
-                          } else void createPairing(terminal);
-                        }}
-                      >
-                        {connected ? "Disconnect" : "Reconnect"}
-                      </button>
-                      <button
-                        className="text-button"
-                        type="button"
-                        disabled={connecting || !!approval || !!question}
-                        onClick={() => {
-                          if (pairing?.terminal.id === terminal.id) {
-                            attempt.current += 1;
-                            void stopCurrent();
-                            setPairing(undefined);
-                            setAgentConnected(false);
-                          }
-                          persistTerminals(
-                            terminalsRef.current.filter((record) => record.id !== terminal.id),
-                          );
-                          setStatus("Terminal forgotten on this device");
-                        }}
-                      >
-                        Forget
-                      </button>
-                    </div>
-                    <label className="toggle">
-                      <input
-                        type="checkbox"
-                        checked={terminal.autoConnect}
-                        onChange={(event) =>
-                          persistTerminals(
-                            rememberTerminal(terminalsRef.current, {
-                              ...terminal,
-                              autoConnect: event.target.checked,
-                            }),
-                          )
-                        }
-                      />
-                      <span>Connect automatically when this pane opens</span>
-                    </label>
-                  </div>
-                );
-              })}
-              <p className="fine-print">
-                Start your saved Sommelier adapter, then reconnect here. One workbook per terminal
-                connection.
-              </p>
-            </section>
-          </details>
-        )}
-        {!agentConnected &&
-          (!pairing || terminals.some((record) => record.id === pairing.terminal.id)) && (
-            <div className="new-terminal">
-              <label htmlFor={nameId}>Name this terminal</label>
-              <input
-                id={nameId}
-                value={terminalName}
-                maxLength={64}
-                onChange={(event) => setTerminalName(event.target.value)}
-                placeholder="e.g. Codex · Finance"
-              />
-              <button
-                className={terminals.length ? "secondary" : "primary"}
-                type="button"
-                disabled={connecting || !terminalName.trim()}
-                onClick={() => void createPairing(undefined, terminalName)}
-              >
-                {terminals.length ? "Pair another terminal" : "Pair a terminal"}
-              </button>
-            </div>
-          )}
-        {pairing &&
-          !agentConnected &&
-          !terminals.some((record) => record.id === pairing.terminal.id) && (
-            <div className="pairing-ticket">
-              <strong>One-time setup</strong>
-              <p>
-                Run sommelier pair --name desk in your terminal and paste the private URL below.
-                Then start your harness adapter. You only need this URL once.
-              </p>
-              <button
-                className="primary"
-                type="button"
-                onClick={() => {
-                  void navigator.clipboard.writeText(pairing.agentUrl).then(
-                    () =>
-                      setStatus("Private URL copied. Paste it into the Sommelier setup command."),
-                    () => setError("Clipboard unavailable. Copy the URL below."),
-                  );
-                }}
-              >
-                Copy connection URL
-              </button>
-              <details>
-                <summary>Show private connection URL</summary>
-                <textarea
-                  aria-label="Private connection URL"
-                  readOnly
-                  rows={3}
-                  value={pairing.agentUrl}
-                />
-              </details>
-              <details>
-                <summary>Alternative: connect using only a skill</summary>
-                <button type="button" className="secondary" onClick={() => void copyAgentPrompt()}>
-                  Copy skill setup
-                </button>
-                <label htmlFor={agentPromptId}>Private setup for your terminal</label>
-                <textarea
-                  id={agentPromptId}
-                  className="agent-prompt"
-                  readOnly
-                  rows={6}
-                  value={terminalSetupPrompt(pairing.agentUrl)}
-                />
-              </details>
-              <a href="/setup.html" target="_blank" rel="noreferrer">
-                Install adapters · reconnect without prompts
-              </a>
-              <button
-                className="text-button"
-                type="button"
-                onClick={() => {
-                  attempt.current += 1;
-                  void stopCurrent();
-                  setPairing(undefined);
-                  setAgentConnected(false);
-                  setStatus("Setup cancelled");
-                }}
-              >
-                Cancel setup
-              </button>
-            </div>
-          )}
-        {connecting && <output>Connecting to the relay…</output>}
-        <output className="status-line" aria-live="polite">
-          {status}
-        </output>
-        {storageNotice && <output>{storageNotice}</output>}
-        <label className="toggle" htmlFor={autoApproveId}>
-          <input
-            id={autoApproveId}
-            type="checkbox"
-            checked={autoApprove}
-            disabled={!pairing || !!approval}
-            onChange={(event) => {
-              autoApproveRef.current = event.target.checked;
-              setAutoApprove(event.target.checked);
-            }}
-          />
-          <span>Approve changes automatically for this connection only. Previews still run.</span>
-        </label>
-      </section>
-      {contextRange && (
-        <section className="context-panel">
-          <strong>{pinned ? "Pinned context" : "Following selection"}</strong>
-          <code>
-            {contextRange.sheetId}!{contextRange.address}
-          </code>
-          <button type="button" onClick={togglePinned}>
-            {pinned ? "Follow selection" : "Pin selection"}
+      {!agentConnected && (
+        <section className="relay-panel">
+          <h2>Connect your agent</h2>
+          <p>Copy this prompt into your agent, then keep this pane open.</p>
+          <button
+            className="primary wide"
+            type="button"
+            disabled={connecting}
+            onClick={() => void copyAgentPrompt()}
+          >
+            {connecting ? "Preparing prompt…" : "Copy agent prompt"}
           </button>
-          <small>Context is a hint for the agent; it does not restrict access to this range.</small>
+          {pairing && (
+            <details
+              open={promptVisible}
+              onToggle={(event) => setPromptVisible(event.currentTarget.open)}
+            >
+              <summary>Show prompt</summary>
+              <label htmlFor={agentPromptId}>Prompt for your agent</label>
+              <textarea
+                id={agentPromptId}
+                className="agent-prompt"
+                readOnly
+                rows={6}
+                value={terminalSetupPrompt(pairing.agentUrl)}
+              />
+              <p className="fine-print">
+                Private connection key included. Pasting shares it with your agent’s provider.
+              </p>
+            </details>
+          )}
         </section>
       )}
-      {pairing && (
+      {(pairing || connecting) && (
+        <output className="connection-status" aria-live="polite">
+          {status}
+        </output>
+      )}
+      {storageNotice && <output>{storageNotice}</output>}
+      {error && (
+        <p className="error" role="alert">
+          {error}
+        </p>
+      )}
+      {agentConnected && (
         <>
           <section className="conversation" aria-live="polite">
             {messages.length === 0 && (
               <div className="empty">
                 <h2>What would you like to do?</h2>
-                <p>Try: “Read my selection and explain what it contains.”</p>
+                <p>Ask about your selection or request a change.</p>
               </div>
             )}
             {messages.map((item) => (
@@ -793,7 +643,7 @@ function RelayMode({ disconnect }: RelayModeProps) {
               placeholder={
                 agentConnected ? "Ask about this workbook..." : "Waiting for your agent to connect"
               }
-              rows={3}
+              rows={2}
               maxLength={32000}
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
@@ -808,30 +658,174 @@ function RelayMode({ disconnect }: RelayModeProps) {
           </form>
         </>
       )}
-      {operations.length > 0 && (
-        <details className="operation-history">
-          <summary>Recent operations ({operations.length})</summary>
-          {operations.map((operation) => (
-            <div key={operation.id}>
-              <span>{operation.status}</span>
-              <small>{operation.summary ?? operation.id}</small>
-              {operation.error && <p>{operation.error}</p>}
-              {operation.status === "committed" && operation.undoable !== false && (
-                <button
-                  type="button"
-                  disabled={!!approval || !!question || !controllerRef.current}
-                  onClick={() => void undo(operation.id)}
-                >
-                  Undo
-                </button>
-              )}
-            </div>
-          ))}
-        </details>
-      )}
-      <button className="text-button" type="button" onClick={disconnect}>
-        Disconnect / use a direct agent
-      </button>
+
+      <details className="pane-options" key={agentConnected ? "connected" : "disconnected"}>
+        <summary>Options</summary>
+        <div className="options-content">
+          {terminals.length > 0 && (
+            <details className="connection-settings" open={!agentConnected}>
+              <summary>{agentConnected ? "Manage connection" : "Saved terminals"}</summary>
+              <section className="terminal-list" aria-label="Authorized terminals">
+                {terminals.map((terminal) => {
+                  const connected = pairing?.terminal.id === terminal.id && agentConnected;
+                  return (
+                    <div className="terminal-card" key={terminal.id}>
+                      <div className="terminal-title">
+                        <strong>{terminal.name}</strong>
+                        <small>{connected ? "Connected" : "Saved terminal"}</small>
+                      </div>
+                      <div className="button-row">
+                        <button
+                          className={connected ? "secondary" : "primary"}
+                          type="button"
+                          disabled={connecting || !!approval || !!question}
+                          onClick={() => {
+                            if (connected) {
+                              attempt.current += 1;
+                              void stopCurrent();
+                              setAgentConnected(false);
+                              setPairing(undefined);
+                              setStatus("Disconnected");
+                            } else void createPairing(terminal);
+                          }}
+                        >
+                          {connected ? "Disconnect" : "Reconnect"}
+                        </button>
+                        <button
+                          className="text-button"
+                          type="button"
+                          disabled={connecting || !!approval || !!question}
+                          onClick={() => {
+                            if (pairing?.terminal.id === terminal.id) {
+                              attempt.current += 1;
+                              void stopCurrent();
+                              setPairing(undefined);
+                              setAgentConnected(false);
+                            }
+                            persistTerminals(
+                              terminalsRef.current.filter((record) => record.id !== terminal.id),
+                            );
+                            setStatus("Terminal forgotten on this device");
+                          }}
+                        >
+                          Forget
+                        </button>
+                      </div>
+                      <label className="toggle">
+                        <input
+                          type="checkbox"
+                          checked={terminal.autoConnect}
+                          onChange={(event) =>
+                            persistTerminals(
+                              rememberTerminal(terminalsRef.current, {
+                                ...terminal,
+                                autoConnect: event.target.checked,
+                              }),
+                            )
+                          }
+                        />
+                        <span>Connect automatically when this pane opens</span>
+                      </label>
+                    </div>
+                  );
+                })}
+              </section>
+            </details>
+          )}
+
+          {pairing && agentConnected && (
+            <label htmlFor={nameId}>
+              Connection name
+              <input
+                id={nameId}
+                value={pairing.terminal.name}
+                maxLength={64}
+                onChange={(event) => {
+                  const name = event.target.value;
+                  setPairing({ ...pairing, terminal: { ...pairing.terminal, name } });
+                }}
+                onBlur={() => {
+                  const name = pairing.terminal.name.trim() || "My terminal";
+                  const terminal = {
+                    ...(terminalsRef.current.find((record) => record.id === pairing.terminal.id) ??
+                      pairing.terminal),
+                    name,
+                  };
+                  setPairing({ ...pairing, terminal });
+                  setTerminalName(name);
+                  persistTerminals(rememberTerminal(terminalsRef.current, terminal));
+                }}
+              />
+            </label>
+          )}
+          <label className="toggle" htmlFor={autoApproveId}>
+            <input
+              id={autoApproveId}
+              type="checkbox"
+              checked={autoApprove}
+              disabled={!pairing || !!approval}
+              onChange={(event) => {
+                autoApproveRef.current = event.target.checked;
+                setAutoApprove(event.target.checked);
+              }}
+            />
+            <span>Approve changes automatically for this connection only. Previews still run.</span>
+          </label>
+          {contextRange && (
+            <details className="context-panel">
+              <summary>Workbook context</summary>
+              <strong>{pinned ? "Pinned context" : "Following selection"}</strong>
+              <code>
+                {contextRange.sheetId}!{contextRange.address}
+              </code>
+              <button type="button" onClick={togglePinned}>
+                {pinned ? "Follow selection" : "Pin selection"}
+              </button>
+              <small>
+                Context is a hint for the agent; it does not restrict access to this range.
+              </small>
+            </details>
+          )}
+          {operations.length > 0 && (
+            <details className="operation-history">
+              <summary>Recent operations ({operations.length})</summary>
+              {operations.map((operation) => (
+                <div key={operation.id}>
+                  <span>{operation.status}</span>
+                  <small>{operation.summary ?? operation.id}</small>
+                  {operation.error && <p>{operation.error}</p>}
+                  {operation.status === "committed" && operation.undoable !== false && (
+                    <button
+                      type="button"
+                      disabled={!!approval || !!question || !controllerRef.current}
+                      onClick={() => void undo(operation.id)}
+                    >
+                      Undo
+                    </button>
+                  )}
+                </div>
+              ))}
+            </details>
+          )}
+
+          <button className="text-button" type="button" onClick={disconnect}>
+            Use a direct agent
+          </button>
+          <footer>
+            <a href="/setup.html" target="_blank" rel="noreferrer">
+              Setup
+            </a>{" "}
+            ·{" "}
+            <a href="/privacy.html" target="_blank" rel="noreferrer">
+              Data &amp; privacy
+            </a>{" "}
+            ·{" "}
+            <a href="/support.html" target="_blank" rel="noreferrer">
+              Support
+            </a>
+          </footer>
+        </div>
+      </details>
       {approval && (
         <ApprovalCard
           summary={approval.summary}
@@ -882,24 +876,6 @@ function RelayMode({ disconnect }: RelayModeProps) {
           </section>
         </div>
       )}
-      {error && (
-        <p className="error" role="alert">
-          {error}
-        </p>
-      )}
-      <footer>
-        <a href="/setup.html" target="_blank" rel="noreferrer">
-          Setup
-        </a>{" "}
-        ·{" "}
-        <a href="/privacy.html" target="_blank" rel="noreferrer">
-          Data &amp; privacy
-        </a>{" "}
-        ·{" "}
-        <a href="/support.html" target="_blank" rel="noreferrer">
-          Support
-        </a>
-      </footer>
     </main>
   );
 }

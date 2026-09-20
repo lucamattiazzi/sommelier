@@ -18,7 +18,9 @@ npm install -g @lucamattiazzi/sommelier@beta
 sommelier pair --name desk
 ```
 
-In Excel choose **Pair a terminal → Copy connection URL**, and paste the URL when the terminal asks.
+For this optional native-adapter workflow, choose **Copy agent prompt → Show prompt** in Excel
+and copy only the private connection URL from the generated text into the terminal prompt.
+The default TaskPane workflow instead lets your existing agent follow the complete prompt.
 It contains the selected server address and a private key: use the local setup prompt, never a model
 chat or a tracked file. Both are remembered locally. There is no central service domain compiled
 into the adapter. Profiles can belong to different self-hosted instances.
@@ -109,7 +111,7 @@ sommelier stop --name desk
 sommelier forget --name desk
 ```
 
-Select the corresponding saved terminal in Excel and choose **Reconnect**, or enable automatic
+Open **Options → Saved terminals** in Excel, select the corresponding terminal and choose **Reconnect**, or enable automatic
 connection on pane open. The local adapter must be running. The relay cannot start a stopped
 computer or process. One adapter consumes chat per named profile; duplicate consumers are refused.
 Use another name for another workbook. `--directory PATH` selects the project on first association;

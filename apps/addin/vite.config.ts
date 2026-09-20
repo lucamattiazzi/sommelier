@@ -37,10 +37,16 @@ export default defineConfig(async ({ command }) => ({
           host: "localhost",
           port: 3000,
           proxy: {
-            "/api": "http://127.0.0.1:3001",
-            "/agent": "http://127.0.0.1:3001",
-            "/connect": { target: "ws://127.0.0.1:3001", ws: true },
-            "/pair": { target: "ws://127.0.0.1:3001", ws: true },
+            "/api": `http://127.0.0.1:${process.env.SOMMELIER_RELAY_PORT ?? "3001"}`,
+            "/agent": `http://127.0.0.1:${process.env.SOMMELIER_RELAY_PORT ?? "3001"}`,
+            "/connect": {
+              target: `ws://127.0.0.1:${process.env.SOMMELIER_RELAY_PORT ?? "3001"}`,
+              ws: true,
+            },
+            "/pair": {
+              target: `ws://127.0.0.1:${process.env.SOMMELIER_RELAY_PORT ?? "3001"}`,
+              ws: true,
+            },
           },
         },
       }
