@@ -160,6 +160,36 @@ test(
         await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
         true,
       );
+      await expect(page.getByRole("link", { name: "Self-host", exact: true })).toHaveAttribute(
+        "href",
+        "/self-host.html",
+      );
+      for (const path of ["/setup.html", "/privacy.html", "/support.html", "/self-host.html"]) {
+        await page.goto(`${origin}${path}`);
+        await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+        await expect(page.getByRole("link", { name: "Sommelier", exact: true })).toHaveAttribute(
+          "href",
+          "/",
+        );
+        await expect(page.locator('nav [aria-current="page"]')).toHaveAttribute("href", path);
+        assert.equal(await page.locator("script").count(), 0);
+        for (const theme of ["light", "dark"]) {
+          await page.emulateMedia({ colorScheme: theme });
+          await expect(page.locator("html")).toHaveCSS(
+            "background-color",
+            theme === "light" ? "rgb(255, 255, 255)" : "rgb(22, 24, 29)",
+          );
+          assert.equal(
+            await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+            true,
+          );
+          await page.screenshot({
+            path: `artifacts/sommelier-${path.slice(1, -5)}-${theme}-320.png`,
+            fullPage: true,
+          });
+        }
+      }
+      await page.emulateMedia({ colorScheme: "light" });
       await page.goto(`${origin}/taskpane.html`);
       await expect(page.getByRole("heading", { name: "Connect your agent" })).toBeVisible();
       await mkdir("artifacts/pair-review", { recursive: true });
@@ -316,6 +346,7 @@ test(
         "/setup.html",
         "/privacy.html",
         "/support.html",
+        "/self-host.html",
         "/help.css",
         "/icon-16.png",
         "/icon-32.png",

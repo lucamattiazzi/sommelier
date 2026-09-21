@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Run Sommelier on your own server with Docker Compose, your own domain and an encrypted relay.">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#16181d" media="(prefers-color-scheme: dark)">
+    <title>Self-host Sommelier · Sommelier</title>
+    <link rel="stylesheet" href="/landing.css">
+    <link rel="stylesheet" href="/help.css">
+    <link rel="icon" href="/icon-32.png">
+  </head>
+  <body class="guide">
+    <main>
+      <header><a class="brand" href="/"><img src="/icon-80.png" width="40" height="40" alt=""><span>Sommelier</span></a></header>
+      <nav aria-label="Documentation"><a href="/setup.html">Setup guide</a><a href="/privacy.html">Privacy</a><a href="/support.html">Help</a><a href="/self-host.html" aria-current="page">Self-host</a></nav>
+      <h1>Self-host Sommelier</h1>
+      <p>Run the homepage, Excel TaskPane and encrypted relay on your own server and domain. Your agent stays on your machine; the relay forwards encrypted traffic between it and Excel.</p>
+      <h2>What you need</h2>
+      <p>A Linux server with Docker Engine and Docker Compose, plus a domain pointing to it. The included Caddy service manages HTTPS. Allow inbound TCP ports 80 and 443, and UDP 443 for HTTP/3; keep SSH available for administration.</p>
+      <h2>Start your instance</h2>
+      <p>Clone the repository on your server and create its deployment configuration:</p>
+      <pre><code>git clone https://github.com/lucamattiazzi/sommelier.git
+cd sommelier/deploy/sommelier
+cp .env.example .env</code></pre>
+      <p>In <code>.env</code>, set <code>SOMMELIER_DOMAIN</code> to your domain, for example <code>sommelier.example.com</code>. Then start the services:</p>
+      <pre><code>docker compose up --build -d
+docker compose ps</code></pre>
+      <p>Open your domain to check the homepage. Download its Excel manifest using <strong>Download Excel add-in</strong>, then follow the <a href="/setup.html">setup guide</a> to pair your agent.</p>
+      <h2>Already running a reverse proxy?</h2>
+      <p>Use <code>compose.external-caddy.yaml</code> to join your existing Caddy network without starting a second proxy. The <a href="https://github.com/lucamattiazzi/sommelier/blob/main/deploy/sommelier/README.md#use-an-existing-reverse-proxy">deployment guide on GitHub</a> includes the configuration and commands.</p>
+      <h2>Updates and configuration</h2>
+      <p>The manifest uses the domain selected at build time. If you change domains, rebuild the image, install the new manifest and pair again. Keep agent credentials and connection keys on the endpoints.</p>
+      <p>For registry images, updates and the complete configuration, read the <a href="https://github.com/lucamattiazzi/sommelier/blob/main/deploy/sommelier/README.md">full self-hosting guide</a>.</p>
+      <footer>Sommelier · Your server, your domain</footer>
+    </main>
+  </body>
+</html>
