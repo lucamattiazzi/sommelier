@@ -8,11 +8,11 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Sommelier"/>
   <Description DefaultValue="Excels at pairing. Connect Excel to your AI agent and approve workbook changes."/>
-  <IconUrl DefaultValue="https://localhost:3000/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://localhost:3000/icon-64.png"/>
-  <SupportUrl DefaultValue="https://localhost:3000/support.html"/>
+  <IconUrl DefaultValue="https://sommelier.grokked.it/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://sommelier.grokked.it/icon-64.png"/>
+  <SupportUrl DefaultValue="https://sommelier.grokked.it/support.html"/>
   <AppDomains>
-    <AppDomain>https://localhost:3000</AppDomain>
+    <AppDomain>https://sommelier.grokked.it</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Workbook"/>
@@ -23,7 +23,7 @@
     </Sets>
   </Requirements>
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://localhost:3000/taskpane.html"/>
+    <SourceLocation DefaultValue="https://sommelier.grokked.it/taskpane.html"/>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
@@ -69,12 +69,12 @@
     </Hosts>
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16" DefaultValue="https://localhost:3000/icon-16.png"/>
-        <bt:Image id="Icon.32" DefaultValue="https://localhost:3000/icon-32.png"/>
-        <bt:Image id="Icon.80" DefaultValue="https://localhost:3000/icon-80.png"/>
+        <bt:Image id="Icon.16" DefaultValue="https://sommelier.grokked.it/icon-16.png"/>
+        <bt:Image id="Icon.32" DefaultValue="https://sommelier.grokked.it/icon-32.png"/>
+        <bt:Image id="Icon.80" DefaultValue="https://sommelier.grokked.it/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://sommelier.grokked.it/taskpane.html"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="Group.Label" DefaultValue="Sommelier"/>

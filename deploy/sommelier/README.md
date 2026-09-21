@@ -43,7 +43,17 @@ SOMMELIER_PUBLIC_ORIGIN=https://sommelier.example.com \
   pnpm --filter @lucamattiazzi/sommelier-addin manifest:production
 ```
 
-Validate and sideload `apps/addin/manifest.xml` before submitting it to Microsoft AppSource.
+The production file is `apps/addin/public/manifest.xml`. The build serves it at `/manifest.xml`;
+the separate `apps/addin/manifest.xml` remains the localhost development manifest.
+Share the production XML from your instance or repository for manual installation in Excel.
+
+The same Node server serves the static English home page at `/`, the TaskPane at
+`/taskpane.html` and encrypted WebSockets at `/connect`. No additional web server application
+or frontend deployment is needed; Caddy handles public HTTPS.
+
+For the project's hosted instance, set `SOMMELIER_DOMAIN=sommelier.grokked.it` in `.env`.
+Create the domain's DNS record before starting Caddy. The committed hosted manifest is generated
+with `pnpm manifest:hosted`; self-hosted builds always use their own `SOMMELIER_DOMAIN`.
 
 ## Change instance
 

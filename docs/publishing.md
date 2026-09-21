@@ -60,8 +60,27 @@ pnpm sommelier:build
 Replace `sommelier.example.com` with the deployment domain. The generated manifest is copied into the
 add-in build. See [Docker/Caddy deployment](../deploy/sommelier/README.md).
 
-The development manifest remains useful for local sideloading; restore it with
-`pnpm manifest:generate` after preparing production artifacts.
+The production manifest is `apps/addin/public/manifest.xml`, copied by Vite into the hosted build.
+The independent development manifest remains at `apps/addin/manifest.xml`; generate it with
+`pnpm manifest:generate`. Production generation does not overwrite it.
+
+For the hosted `sommelier.grokked.it` instance, run `pnpm manifest:hosted` and commit the resulting
+XML. The README links directly to this file on GitHub. `pnpm manifest:check` validates both
+committed manifests. For self-hosting, use the environment-specific production command above.
+
+When upgrading an older sideloaded manifest that opened `/`, replace it with the new manifest
+so Excel opens `/taskpane.html`. The add-in ID remains unchanged.
+
+The landing page, TaskPane and manifest are all included in the add-in build and served by the
+existing relay server. Publishing files to GitHub does not configure DNS or deploy the server.
+
+The hosted manifest passed the Microsoft XML schema checks during preparation. The production
+validator could not reach the hosted support page and icons while DNS/deployment was unavailable.
+After bringing the domain online, complete the production check:
+
+```sh
+pnpm dlx office-addin-manifest validate -p apps/addin/public/manifest.xml
+```
 
 Before an AppSource submission, validate the manifest and complete the real Excel/harness checks
 in [the testing guide](pair-testing.md). Support/setup/data-handling pages and sized icons are included; see the [asset inventory](marketplace-assets.md).

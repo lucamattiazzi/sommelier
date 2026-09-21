@@ -20,6 +20,7 @@ export function generateManifest(project: LoadedProject, environment: ManifestEn
   const url =
     environment === "development" ? config.taskpane.developmentUrl : config.taskpane.productionUrl;
   const base = url.replace(/\/$/, "");
+  const entry = config.taskpane.entryPath ? `${base}${config.taskpane.entryPath}` : base;
   const icon = `${base}/${basename(config.commands.icon)}`;
   const iconFor = (size: 16 | 32 | 64 | 80) =>
     config.commands.icons ? `${base}/${basename(config.commands.icons[size])}` : icon;
@@ -50,7 +51,7 @@ export function generateManifest(project: LoadedProject, environment: ManifestEn
     .up()
     .up()
     .up();
-  document.ele("DefaultSettings").ele("SourceLocation", { DefaultValue: base }).up().up();
+  document.ele("DefaultSettings").ele("SourceLocation", { DefaultValue: entry }).up().up();
   document.ele("Permissions").txt(config.office.permissions).up();
   const overrides = document.ele("VersionOverrides", {
     xmlns: "http://schemas.microsoft.com/office/taskpaneappversionoverrides",
@@ -105,7 +106,7 @@ export function generateManifest(project: LoadedProject, environment: ManifestEn
       imageResources.ele("bt:Image", { id: iconId(size), DefaultValue: iconFor(size) }).up();
   } else imageResources.ele("bt:Image", { id: "Icon.Url", DefaultValue: icon }).up();
   imageResources.up();
-  resources.ele("bt:Urls").ele("bt:Url", { id: "Taskpane.Url", DefaultValue: base }).up().up();
+  resources.ele("bt:Urls").ele("bt:Url", { id: "Taskpane.Url", DefaultValue: entry }).up().up();
   const strings = resources.ele("bt:ShortStrings");
   strings.ele("bt:String", { id: "Group.Label", DefaultValue: config.commands.groupLabel }).up();
   strings.ele("bt:String", { id: "Button.Label", DefaultValue: config.commands.label }).up().up();

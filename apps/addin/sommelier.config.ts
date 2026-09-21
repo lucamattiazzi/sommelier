@@ -5,7 +5,7 @@ export default defineConfig({
     id: "4dc1f4b5-e74d-4b9a-87d1-d36d78a2bd4f",
     name: "Sommelier",
     description: "Excels at pairing. Connect Excel to your AI agent and approve workbook changes.",
-    version: "0.2.0",
+    version: "0.2.1",
     providerName: "Luca Mattiazzi",
   },
   office: {
@@ -19,6 +19,7 @@ export default defineConfig({
       process.env.SOMMELIER_PUBLIC_ORIGIN ??
       process.env.PAIR_PUBLIC_ORIGIN ??
       "https://sommelier.example.com",
+    entryPath: "/taskpane.html",
     developmentCommand: "pnpm dev",
     supportPath: "/support.html",
   },

@@ -24,7 +24,7 @@ pnpm server:dev
 pnpm addin:dev
 ```
 
-Vite serve il task pane su `https://localhost:3000`; il relay locale ascolta su `127.0.0.1:3001`.
+Vite serve il task pane su `https://localhost:3000/taskpane.html`; il relay locale ascolta su `127.0.0.1:3001`.
 Il primo avvio può chiedere di installare e considerare attendibile il certificato di sviluppo Office.
 Carica in Excel il manifest **`apps/addin/manifest.xml`**.
 L'URL del manifest è `https://localhost:3000/manifest.xml` per i percorsi di sideload che lo accettano.

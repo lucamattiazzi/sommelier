@@ -1,4 +1,4 @@
-import { copyFile, readFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import react from "@vitejs/plugin-react";
 import devCerts from "office-addin-dev-certs";
@@ -22,14 +22,14 @@ function manifestPlugin(): Plugin {
           .catch(next);
       });
     },
-    async closeBundle() {
-      await copyFile(manifest, resolve("dist/manifest.xml"));
-    },
   };
 }
 
 export default defineConfig(async ({ command }) => ({
   plugins: [react(), manifestPlugin()],
+  build: {
+    rollupOptions: { input: { home: resolve("index.html"), taskpane: resolve("taskpane.html") } },
+  },
   ...(command === "serve"
     ? {
         server: {

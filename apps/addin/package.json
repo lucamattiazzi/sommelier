@@ -7,10 +7,12 @@
     "dev": "vite --host localhost --port 3000",
     "build": "tsc --noEmit && vite build",
     "manifest:development": "INIT_CWD=. node ../../packages/config/dist/cli.js manifest generate --environment development --output manifest.xml",
-    "manifest:production": "INIT_CWD=. node ../../packages/config/dist/cli.js manifest generate --environment production --output manifest.xml",
+    "manifest:production": "INIT_CWD=. node ../../packages/config/dist/cli.js manifest generate --environment production --output public/manifest.xml",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "manifest:check": "INIT_CWD=. node ../../packages/config/dist/cli.js manifest generate --environment development --output manifest.xml --check"
+    "manifest:check": "INIT_CWD=. node ../../packages/config/dist/cli.js manifest generate --environment development --output manifest.xml --check",
+    "manifest:hosted": "SOMMELIER_PUBLIC_ORIGIN=https://sommelier.grokked.it pnpm manifest:production",
+    "manifest:check:hosted": "SOMMELIER_PUBLIC_ORIGIN=https://sommelier.grokked.it INIT_CWD=. node ../../packages/config/dist/cli.js manifest generate --environment production --output public/manifest.xml --check"
   },
   "dependencies": {
     "@lucamattiazzi/sommelier-addin-core": "workspace:^",

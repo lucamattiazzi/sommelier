@@ -89,3 +89,28 @@ it("uses configured icon sizes and a real support page", () => {
   expect(manifest).toContain('<SupportUrl DefaultValue="https://agent.example.com/support.html"');
   for (const size of [16, 32, 80]) expect(manifest).toContain(`resid="Icon.${size}"`);
 });
+
+it("uses a separate task-pane entry without moving icons or support URLs", () => {
+  const manifest = generateManifest(
+    {
+      ...project,
+      config: {
+        ...project.config,
+        taskpane: {
+          ...project.config.taskpane,
+          entryPath: "/taskpane.html",
+          supportPath: "/support.html",
+        },
+      },
+    },
+    "production",
+  );
+  expect(manifest).toContain(
+    '<SourceLocation DefaultValue="https://agent.example.com/taskpane.html"',
+  );
+  expect(manifest).toContain(
+    'id="Taskpane.Url" DefaultValue="https://agent.example.com/taskpane.html"',
+  );
+  expect(manifest).toContain('<IconUrl DefaultValue="https://agent.example.com/add-in.png"');
+  expect(manifest).toContain('<SupportUrl DefaultValue="https://agent.example.com/support.html"');
+});

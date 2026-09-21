@@ -8,7 +8,9 @@
 | PNG icons 16, 32, 64, 80, 128 px | `apps/addin/public/icon-*.png` | Ribbon, insertion and high-DPI artwork |
 | Existing 80 px icon | `apps/addin/public/icon.png` | Backward-compatible asset |
 | Reproducible icon renderer | `scripts/generate-icons.mjs` | Renders SVG at each target size using Playwright |
-| Office manifest | `apps/addin/manifest.xml` | Development sideload; production origin generated from configuration |
+| Development Office manifest | `apps/addin/manifest.xml` | Localhost sideload, opens `/taskpane.html` |
+| Hosted Office manifest | `apps/addin/public/manifest.xml` | Generated for `sommelier.grokked.it`, downloadable from GitHub and the site |
+| Static English landing page | `apps/addin/index.html`, `apps/addin/public/landing.css` | Introduction, manifest download, GitHub and setup links |
 | Support and troubleshooting | `apps/addin/public/support.html` | Real help page linked by the manifest |
 | Data handling explanation | `apps/addin/public/privacy.html` | Relay, endpoint and provider trust boundaries |
 | Setup page | `apps/addin/public/setup.html` | One-time installation and remembered reconnect flow |

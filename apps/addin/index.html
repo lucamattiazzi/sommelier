@@ -3,10 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#10231d" />
+    <meta name="description" content="Connect Excel to your own AI agent. Read cells, review changes and create charts with Sommelier, an open-source Excel add-in." />
+    <meta name="theme-color" content="#163b30" />
     <link rel="icon" href="/icon-32.png" />
-    <title>Sommelier</title>
-    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <link rel="stylesheet" href="/landing.css" />
+    <title>Sommelier — Excels at pairing.</title>
   </head>
-  <body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body>
+  <body>
+    <main>
+      <header><img src="/icon-80.png" width="40" height="40" alt="" /><span>Sommelier</span></header>
+      <p class="eyebrow">Excels at pairing.</p>
+      <h1>Your spreadsheet.<br />Your AI agent.</h1>
+      <p class="intro">Connect Excel to the agent you already use in Codex, OpenCode or Claude Code. Ask it to read cells, propose changes and create charts, right in your workbook.</p>
+      <div class="links">
+        <a class="primary" href="/manifest.xml" download="sommelier-manifest.xml">Download Excel add-in</a>
+        <a href="https://github.com/lucamattiazzi/sommelier">View on GitHub <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="note">Free and open source · Beta · Install manually in Excel</p>
+      <ol>
+        <li><strong>Add it to Excel.</strong> Download the XML manifest and <a href="https://learn.microsoft.com/en-us/office/dev/add-ins/testing/sideload-office-add-ins-for-testing">sideload it in Excel</a>.</li>
+        <li><strong>Pair your agent.</strong> Open Sommelier, copy the setup prompt and paste it into your agent. No skill installation required.</li>
+        <li><strong>Work in the chat.</strong> Ask questions and review proposed workbook changes before approving them.</li>
+      </ol>
+      <p class="privacy">Workbook traffic is encrypted between Excel and the local bridge. The relay cannot read it. Your chosen agent controls what it sends to its model provider.</p>
+      <p class="note">Requires Node.js 22.12+ and an agent with shell access. Keep the agent listening while you work. The setup prompt includes a private connection key shared with that agent.</p>
+      <footer><a href="/setup.html">Setup guide</a><a href="/privacy.html">Privacy</a><a href="/support.html">Help</a><a href="https://github.com/lucamattiazzi/sommelier/blob/main/deploy/sommelier/README.md">Self-host</a></footer>
+    </main>
+  </body>
 </html>

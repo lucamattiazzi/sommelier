@@ -29,6 +29,10 @@ export const sommelierConfigSchema = z.object({
     developmentUrl: z.string().url(),
     productionUrl: z.string().url(),
     developmentCommand: z.string().min(1).optional(),
+    entryPath: z
+      .string()
+      .regex(/^\/(?!\/)[a-zA-Z0-9/_.-]*$/)
+      .optional(),
     supportPath: z
       .string()
       .regex(/^\/(?!\/)[a-zA-Z0-9/_.-]*$/)

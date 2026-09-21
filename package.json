@@ -19,7 +19,7 @@
     "sommelier:build": "pnpm bridge:build && pnpm --filter @lucamattiazzi/sommelier-addin... --filter @lucamattiazzi/sommelier-server... build",
     "manifest:generate": "pnpm --filter @lucamattiazzi/sommelier-addin manifest:development",
     "manifest:production": "pnpm --filter @lucamattiazzi/sommelier-addin manifest:production",
-    "manifest:check": "pnpm --filter @lucamattiazzi/sommelier-addin manifest:check",
+    "manifest:check": "pnpm --filter @lucamattiazzi/sommelier-addin manifest:check && pnpm --filter @lucamattiazzi/sommelier-addin manifest:check:hosted",
     "smoke:packages": "node scripts/package-smoke.mjs",
     "smoke:consumer": "node scripts/external-consumer-smoke.mjs",
     "changeset": "changeset",
@@ -28,7 +28,8 @@
     "test:harness": "node --test scripts/install-harness.test.mjs",
     "test:browser": "node --test scripts/pair-browser.test.mjs",
     "agent": "node packages/bridge/dist/agent.js",
-    "release:beta": "pnpm -r --filter \"./packages/**\" publish --tag beta --access public --publish-branch main"
+    "release:beta": "pnpm -r --filter \"./packages/**\" publish --tag beta --access public --publish-branch main",
+    "manifest:hosted": "pnpm --filter @lucamattiazzi/sommelier-addin manifest:hosted"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",

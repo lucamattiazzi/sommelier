@@ -24,11 +24,24 @@ Source: [lucamattiazzi/sommelier](https://github.com/lucamattiazzi/sommelier).
 This beta has not been approved for the Microsoft Marketplace. See the release readiness notes
 for the remaining real Excel and harness validation.
 
-## Use a hosted instance
+## Install from GitHub
 
-Install the add-in supplied by your service operator, or deploy your own instance with the
-[Docker/self-hosting guide](deploy/sommelier/README.md). End users only run the local harness adapter;
-the Sommelier server runs on the operator's infrastructure.
+[Download the production manifest](https://raw.githubusercontent.com/lucamattiazzi/sommelier/main/apps/addin/public/manifest.xml)
+· [View the manifest](apps/addin/public/manifest.xml)
+
+The add-in uses an XML manifest, not a JSON manifest. This generated file targets
+`https://sommelier.grokked.it/taskpane.html`. Save it as `sommelier-manifest.xml` and
+[sideload it in Excel](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/sideload-office-add-ins-for-testing).
+Marketplace installation is not required for this workflow. On Mac desktop, use
+[Microsoft's Mac sideloading guide](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/sideload-an-office-add-in-on-mac).
+
+The hosted site is configured for [sommelier.grokked.it](https://sommelier.grokked.it).
+Its DNS and server deployment must be active before this manifest can open the add-in.
+The same server serves the landing page at `/`, the TaskPane at `/taskpane.html`, the manifest
+at `/manifest.xml`, and the encrypted relay at `/connect`.
+
+To operate your own instance, follow the [Docker/self-hosting guide](deploy/sommelier/README.md)
+and generate a manifest for your own domain. End users only run the local bridge.
 
 In the TaskPane choose **Copy agent prompt** and paste it into your existing agent. No skill
 installation is required: the prompt contains the local bridge bootstrap, workbook RPC examples,
@@ -64,7 +77,7 @@ pnpm addin:dev
 ```
 
 Sideload `apps/addin/manifest.xml` in Excel. The add-in is served at
-`https://localhost:3000`; the development relay listens on `127.0.0.1:3001`. The Office development
+`https://localhost:3000/taskpane.html`; the development relay listens on `127.0.0.1:3001`. The Office development
 certificate may require trust on first use. A regular browser uses a synthetic in-memory workbook.
 
 If port 3001 is occupied, set the same relay port in both development terminals:

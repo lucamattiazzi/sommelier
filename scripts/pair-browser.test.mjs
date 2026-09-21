@@ -57,6 +57,35 @@ test(
     await page.route("https://appsforoffice.microsoft.com/**", (route) => route.abort());
     try {
       await page.goto(origin);
+      await expect(
+        page.getByRole("heading", { name: "Your spreadsheet. Your AI agent." }),
+      ).toBeVisible();
+      await expect(page.getByRole("link", { name: "Download Excel add-in" })).toHaveAttribute(
+        "href",
+        "/manifest.xml",
+      );
+      assert.equal(await page.locator('script[src*="office.js"]').count(), 0);
+      const manifestResponse = await fetch(`${origin}/manifest.xml`);
+      assert.equal(manifestResponse.status, 200);
+      const manifest = await manifestResponse.text();
+      assert.ok(manifest.includes('/taskpane.html"'));
+      assert.ok(!manifest.includes("localhost"));
+      const linkedAssets = [...manifest.matchAll(/DefaultValue="(https:[^"]+)"/g)];
+      for (const [, url] of linkedAssets) {
+        const asset = await fetch(`${origin}${new URL(url).pathname}`);
+        assert.equal(asset.status, 200, url);
+        const head = await fetch(`${origin}${new URL(url).pathname}`, { method: "HEAD" });
+        assert.equal(head.status, 200, url);
+      }
+      await page.setViewportSize({ width: 1100, height: 850 });
+      await page.screenshot({ path: "artifacts/sommelier-home-desktop.png", fullPage: true });
+      await page.setViewportSize({ width: 320, height: 640 });
+      await page.screenshot({ path: "artifacts/sommelier-home-320.png", fullPage: true });
+      assert.equal(
+        await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+        true,
+      );
+      await page.goto(`${origin}/taskpane.html`);
       await expect(page.getByRole("heading", { name: "Connect your agent" })).toBeVisible();
       await mkdir("artifacts/pair-review", { recursive: true });
       await page.screenshot({ path: "artifacts/pair-review/initial-320.png", fullPage: true });
@@ -207,6 +236,8 @@ test(
       await expect(page.getByLabel("Prompt for your agent", { exact: true })).toBeVisible();
       assert.deepEqual(errors, []);
       for (const path of [
+        "/taskpane.html",
+        "/landing.css",
         "/setup.html",
         "/privacy.html",
         "/support.html",
