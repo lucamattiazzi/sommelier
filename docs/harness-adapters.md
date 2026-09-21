@@ -4,18 +4,17 @@ Sommelier connects the open Excel workbook to **OpenCode, Codex or Claude Code**
 credentials stay with the selected harness. A skill alone cannot start an agent turn: these
 adapters deliver incoming TaskPane messages to the harness's native input mechanism.
 
-## Install and associate once
+## Run and associate once
 
 Requires Node.js 22.12+ and the chosen harness installed and signed in. Use the add-in supplied by
 your Sommelier service operator, or your own self-hosted instance. **End users do not run a Sommelier server.**
 The local adapter connects outbound to the instance chosen during pairing; no public inbound port
 or fixed service domain is required on the user's machine.
 
-Install the published beta adapter:
+Run the published adapter without a global installation:
 
 ```sh
-npm install -g @lucamattiazzi/sommelier@beta
-sommelier pair --name desk
+npx --yes --ignore-scripts --package=@lucamattiazzi/sommelier@0.2.0-beta.2 -- sommelier pair --name desk
 ```
 
 For this optional native-adapter workflow, choose **Copy agent prompt → Show prompt** in Excel
@@ -34,8 +33,10 @@ pnpm --filter @lucamattiazzi/sommelier-protocol --filter @lucamattiazzi/sommelie
 pnpm agent pair --name desk
 ```
 
-In the commands below, replace `sommelier` with `pnpm agent` when using that checkout.
-Use the `beta` tag explicitly; stable versions of the shared packages remain on `latest`.
+In the commands below, replace `sommelier` with
+`npx --yes --ignore-scripts --package=@lucamattiazzi/sommelier@0.2.0-beta.2 -- sommelier`,
+or with `pnpm agent` when using a source checkout. npx caches the package locally; it does not
+add dependencies to your project. Saved connection profiles remain in `~/.sommelier`.
 
 ## Codex
 

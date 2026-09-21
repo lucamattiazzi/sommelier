@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { once } from "node:events";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readdir, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -103,11 +103,27 @@ test(
     const environment = { ...process.env, SOMMELIER_HOME: profile };
     delete environment.SOMMELIER_URL;
     delete environment.SOMMELIER_SESSION;
+    const project = join(profile, "empty-project");
+    await mkdir(project);
+    const runnerPackage = process.env.SOMMELIER_TEST_PACKAGE;
     const bridge = (args, url) =>
       run(
-        process.execPath,
-        [process.env.SOMMELIER_TEST_BRIDGE ?? "skills/sommelier/scripts/session.mjs", ...args],
+        runnerPackage ? "npx" : process.execPath,
+        runnerPackage
+          ? [
+              "--yes",
+              "--ignore-scripts",
+              `--package=${runnerPackage}`,
+              "--",
+              "sommelier-session",
+              ...args,
+            ]
+          : [
+              resolve(process.env.SOMMELIER_TEST_BRIDGE ?? "skills/sommelier/scripts/session.mjs"),
+              ...args,
+            ],
         {
+          cwd: project,
           env: { ...environment, ...(url ? { SOMMELIER_URL: url } : {}) },
         },
       ).then(({ stdout }) => JSON.parse(stdout));
@@ -204,13 +220,14 @@ test(
       ).toBeVisible();
       await page.getByText("Show prompt", { exact: true }).click();
       const prompt = await page.getByLabel("Prompt for your agent", { exact: true }).inputValue();
-      assert.ok(prompt.includes("@lucamattiazzi/sommelier@0.2.0-beta.1"));
+      assert.ok(prompt.includes("@lucamattiazzi/sommelier@0.2.0-beta.2"));
       assert.equal(await page.evaluate(() => window.copiedSetupPrompt), prompt);
       assert.ok(!prompt.includes("SKILL.md"));
       await page.screenshot({ path: "artifacts/pair-review/pairing-320.png", fullPage: true });
       const url = prompt.match(/wss?:\/\/[^\s]+/)[0];
       await page.getByText("Show prompt", { exact: true }).click();
       await bridge(["start", "--name", "desk"], url);
+      assert.deepEqual(await readdir(project), [], "pairing must not install into the project");
       await expect(
         page.getByText("Connected · end-to-end encrypted", { exact: true }),
       ).toBeVisible();

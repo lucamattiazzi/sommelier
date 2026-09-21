@@ -3,14 +3,30 @@
 `sommelier` connects Codex, OpenCode or Claude Code to the Excel Sommelier TaskPane. Requires
 Node.js 22.12+ and a signed-in harness. The included skill, bridge and crypto are self-contained.
 
+## Pair your existing agent
+
+Copy the setup prompt from the Excel TaskPane into your running agent. No skill or global
+installation is needed: the prompt uses the standalone `sommelier-session` command through npx.
+It includes the private connection URL, RPC commands and listening loop.
+
 ```sh
-npm install -g @lucamattiazzi/sommelier@beta
-sommelier pair --name desk
-sommelier codex --name desk
-# Or: opencode --name desk
-# Or: claude --name desk (Channels research preview; local consent required)
-sommelier list
-sommelier trace --name desk --out run.jsonl
+# Resume a previously saved connection (first pairing uses the TaskPane prompt):
+npx --yes --ignore-scripts --package=@lucamattiazzi/sommelier@0.2.0-beta.2 -- sommelier-session start --name desk
+npx --yes --ignore-scripts --package=@lucamattiazzi/sommelier@0.2.0-beta.2 -- sommelier-session status --name desk
+```
+
+npx downloads the package into its cache. Connection profiles are saved in `~/.sommelier`;
+your project needs no `package.json` or `node_modules`. Keep the cache while the bridge is running.
+The agent must keep listening; starting the bridge alone cannot wake a suspended agent.
+
+## Optional native adapters
+
+Run these directly through npx as well:
+
+```sh
+npx --yes --ignore-scripts --package=@lucamattiazzi/sommelier@0.2.0-beta.2 -- sommelier pair --name desk
+npx --yes --ignore-scripts --package=@lucamattiazzi/sommelier@0.2.0-beta.2 -- sommelier codex --name desk
+# Replace codex with opencode or claude (Claude requires local channel consent).
 ```
 
 Sommelier asks for the private TaskPane URL once; subsequent starts use the saved profile and native

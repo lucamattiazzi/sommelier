@@ -52,8 +52,12 @@ it("provides a self-contained prompt for an existing agent without a preinstalle
   const url = "wss://relay.example.test/connect?id=synthetic#private-synthetic-key";
   const prompt = terminalSetupPrompt(url);
   expect(prompt).toContain(url);
-  expect(prompt).toContain("@lucamattiazzi/sommelier@0.2.0-beta.1");
-  expect(prompt).toContain("dist/skill");
+  expect(prompt).toContain(
+    "npx --yes --ignore-scripts --package=@lucamattiazzi/sommelier@0.2.0-beta.2 -- sommelier-session start --name PROFILE",
+  );
+  expect(prompt).not.toContain("npm install");
+  expect(prompt).not.toContain("temporary directory");
+  expect(prompt).not.toContain("node BRIDGE");
   expect(prompt).not.toContain("SKILL.md");
   expect(prompt).not.toContain("references/protocol.md");
   expect(prompt).not.toContain("installed sommelier skill");

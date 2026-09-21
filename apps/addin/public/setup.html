@@ -4,7 +4,7 @@
 
 <h1>Connect your agent</h1>
 <ol><li>Open Sommelier in Excel and choose <strong>Copy agent prompt</strong>.</li><li>Paste it into your existing agent and let it run the setup.</li><li>Keep the TaskPane open. When connected, send your requests in its chat.</li></ol>
-<p>No preinstalled skill is needed. Your agent needs shell access and Node.js 22.12+. The prompt installs the published bridge in a temporary directory and includes the workbook commands and listening loop. It does not start another agent.</p>
+<p>No preinstalled skill is needed. Your agent needs shell access and Node.js 22.12+. The prompt runs the published bridge with <code>npx</code>, without a global installation or project setup, and includes the workbook commands and listening loop. It does not start another agent. The package is cached locally, and saved connections stay in <code>~/.sommelier</code>.</p>
 <p>The prompt contains a private connection key. Pasting it shares the key with your chosen agent and potentially its model provider. See <a href="/privacy.html">data and privacy</a>.</p>
 <h2>Work in Excel</h2><p>Ask your agent to read a range, update cells or create a chart. The TaskPane asks you to approve changes. Connection settings, workbook context and recent operations are under <strong>Options</strong>. To rename the default connection, use <strong>Options → Connection name</strong>.</p>
 <h2>Reconnect later</h2><p>Resume the bridge and listening loop in your agent, then choose <strong>Options → Saved terminals → Reconnect</strong> in Excel. The optional Sommelier skill can reuse your saved local profile without another setup prompt. A connected bridge cannot wake a stopped agent.</p>

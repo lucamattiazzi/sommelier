@@ -45,7 +45,9 @@ and generate a manifest for your own domain. End users only run the local bridge
 
 In the TaskPane choose **Copy agent prompt** and paste it into your existing agent. No skill
 installation is required: the prompt contains the local bridge bootstrap, workbook RPC examples,
-approval workflow and chat loop. Requires Node.js 22.12+ and an agent with shell access.
+approval workflow and chat loop. It runs the bridge with `npx`, without a global installation or
+project setup. Requires Node.js 22.12+ (including npx) and an agent with shell access.
+The package is cached locally; saved connections live in `~/.sommelier`.
 The prompt includes a private connection key, which is shared with the chosen agent/provider.
 
 The connection receives a default name. Once connected, use **Options → Connection name** to rename

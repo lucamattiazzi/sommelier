@@ -1,5 +1,12 @@
 # @lucamattiazzi/sommelier
 
+## 0.2.0-beta.2
+
+### Patch Changes
+
+- Expose `sommelier-session` for pairing, workbook RPC and reconnection through npx,
+  without a global installation, project setup or preinstalled skill.
+
 ## 0.2.0-beta.1
 
 ### Minor Changes
