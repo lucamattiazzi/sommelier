@@ -79,6 +79,9 @@ pnpm addin:dev
 Sideload `apps/addin/manifest.xml` in Excel. The add-in is served at
 `https://localhost:3000/taskpane.html`; the development relay listens on `127.0.0.1:3001`. The Office development
 certificate may require trust on first use. A regular browser uses a synthetic in-memory workbook.
+The introduction page is at `https://localhost:3000/`. The relay also serves the last built site
+at `http://127.0.0.1:3001/`; rebuild the add-in to update that copy. Use the HTTPS Vite URLs and
+development manifest for local Excel testing.
 
 If port 3001 is occupied, set the same relay port in both development terminals:
 
