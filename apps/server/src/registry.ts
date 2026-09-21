@@ -50,13 +50,20 @@ export function createTerminalRegistry(publicOrigin: string, capacity: number, i
       const token = url.searchParams.get("token") ?? "";
       const role = url.searchParams.get("role");
       const origin = request.headers.origin;
-      if (
-        !/^[a-f\d-]{36}$/i.test(id) ||
-        !/^[\w-]{43}$/.test(token) ||
-        (role !== "addin" && role !== "agent") ||
-        (origin && origin !== publicOrigin)
-      ) {
-        socket.close(1008, "Invalid terminal credentials or origin.");
+      if (!/^[a-f\d-]{36}$/i.test(id)) {
+        socket.close(1008, "Invalid terminal UID.");
+        return;
+      }
+      if (role !== "addin" && role !== "agent") {
+        socket.close(1008, "Invalid terminal role.");
+        return;
+      }
+      if (!/^[\w-]{43}$/.test(token)) {
+        socket.close(1008, "Missing or invalid relay token. Copy the complete pairing URL.");
+        return;
+      }
+      if (origin && origin !== publicOrigin) {
+        socket.close(1008, "Origin is not allowed.");
         return;
       }
       let connection = connections.get(id);

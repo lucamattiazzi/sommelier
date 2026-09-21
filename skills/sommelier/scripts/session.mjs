@@ -96,11 +96,16 @@ function pairUrl() {
   }
   if (parsed.protocol === "ws:" && !["localhost", "127.0.0.1", "[::1]"].includes(parsed.hostname))
     fail("Remote relays require WSS.");
-  if (
-    parsed.pathname === "/connect" &&
-    (!/^[\w-]{43}$/.test(parsed.hash.slice(1)) || parsed.searchParams.get("role") !== "agent")
-  )
-    fail("An encrypted agent URL is required.");
+  if (parsed.pathname === "/connect") {
+    if (!/^[\w-]{43}$/.test(parsed.hash.slice(1)) || parsed.searchParams.get("role") !== "agent")
+      fail("An encrypted agent URL is required.");
+    if (!/^[a-f\d-]{36}$/i.test(parsed.searchParams.get("uid") ?? ""))
+      fail("Invalid terminal UID. Copy the complete pairing URL.");
+    if (!/^[\w-]{43}$/.test(parsed.searchParams.get("token") ?? ""))
+      fail(
+        "Missing or invalid relay token. Copy the complete pairing URL, including token and #secret.",
+      );
+  }
   return url;
 }
 

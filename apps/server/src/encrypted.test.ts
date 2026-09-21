@@ -12,6 +12,7 @@ import { createPairServer, type PairServer } from "./index.js";
 let server: PairServer | undefined;
 afterEach(async () => {
   await server?.close();
+  server = undefined;
 });
 
 it("reconnects a stable UID and relays only opaque encrypted frames", async () => {
@@ -179,3 +180,70 @@ it("allows a separately trusted pane origin and rejects other browser origins", 
   await once(good, "open");
   good.close();
 });
+
+it.each([
+  ["uid", "invalid", "Invalid terminal UID."],
+  ["role", "invalid", "Invalid terminal role."],
+  ["token", "", "Missing or invalid relay token. Copy the complete pairing URL."],
+])("identifies invalid %s without exposing credentials", async (parameter, value, reason) => {
+  server = await createPairServer({ port: 0, publicOrigin: "https://pair.example.test" });
+  const url = new URL(
+    relaySocketUrl(
+      await pairConnectionUrl(
+        `http://${server.host}:${server.port}`,
+        createPairIdentity(),
+        "agent",
+      ),
+    ),
+  );
+  url.searchParams.set(parameter, value);
+  const socket = new WebSocket(url);
+  const [code, message] = await once(socket, "close");
+  expect(code).toBe(1008);
+  expect(String(message)).toBe(reason);
+});
+
+it("distinguishes a rejected browser origin from invalid credentials", async () => {
+  server = await createPairServer({ port: 0, publicOrigin: "https://pair.example.test" });
+  const url = relaySocketUrl(
+    await pairConnectionUrl(`http://${server.host}:${server.port}`, createPairIdentity(), "agent"),
+  );
+  const socket = new WebSocket(url, { origin: "https://untrusted.example.test" });
+  const [code, message] = await once(socket, "close");
+  expect(code).toBe(1008);
+  expect(String(message)).toBe("Origin is not allowed.");
+});
+
+it.each(["uid", "token"])(
+  "rejects a missing %s locally before saving a bridge profile",
+  async (parameter) => {
+    const { execFile } = await import("node:child_process");
+    const { promisify } = await import("node:util");
+    const { mkdtemp, readdir, rm } = await import("node:fs/promises");
+    const { tmpdir } = await import("node:os");
+    const { join } = await import("node:path");
+    const directory = await mkdtemp(join(tmpdir(), "pair-invalid-url-"));
+    const url = new URL(
+      await pairConnectionUrl("https://pair.example.test", createPairIdentity(), "agent"),
+    );
+    url.searchParams.delete(parameter);
+    try {
+      await expect(
+        promisify(execFile)(
+          process.execPath,
+          ["skills/sommelier/scripts/session.mjs", "start", "--name", "desk"],
+          {
+            env: { ...process.env, SOMMELIER_HOME: directory, SOMMELIER_URL: url.toString() },
+          },
+        ),
+      ).rejects.toMatchObject({
+        stderr: expect.stringContaining(
+          parameter === "uid" ? "Invalid terminal UID" : "Missing or invalid relay token",
+        ),
+      });
+      expect(await readdir(directory)).toEqual([]);
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  },
+);
