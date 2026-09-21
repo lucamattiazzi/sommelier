@@ -18,6 +18,9 @@ adapter. No shared registry, account or dependency on another Sommelier operator
 
 ## Deploy
 
+Clone the repository on the VM first (`git clone https://github.com/lucamattiazzi/sommelier.git`),
+then run the following from its root. No container registry is required for this source-build path.
+
 ```sh
 cd deploy/sommelier
 cp .env.example .env
@@ -32,6 +35,105 @@ straight to the configured agent endpoint. E2EE keys and saved associations rema
 the relay keeps only an in-memory routing registry and forwards encrypted frames. Saved profiles
 survive relay restarts and reconnect without a new association. Caddy access logging is intentionally not enabled because relay credentials
 are carried in WebSocket query strings.
+
+### Use an existing reverse proxy
+
+If Caddy already runs in a separate Compose project, use `compose.external-caddy.yaml` on its own
+instead of `compose.yaml`. This variant starts only Sommelier, joins Caddy's existing external
+network and publishes no host ports. The `expose` setting documents its container port; only Caddy
+accepts public traffic. Other containers on the shared network can also reach Sommelier.
+
+In `deploy/sommelier/.env`, set:
+
+```dotenv
+SOMMELIER_DOMAIN=sommelier.grokked.it
+CADDY_NETWORK=your-existing-network-name
+```
+
+Use the actual network name from your Caddy deployment (`docker network ls` lists the networks).
+Do not create a second network. From `deploy/sommelier`, validate and start the service:
+
+```sh
+docker compose -f compose.external-caddy.yaml config --quiet
+docker compose -f compose.external-caddy.yaml up --build -d
+docker compose -f compose.external-caddy.yaml ps
+```
+
+Add this site block to your **existing Caddyfile**, replacing the domain for another deployment:
+
+```caddyfile
+sommelier.grokked.it {
+  encode zstd gzip
+  reverse_proxy sommelier:3000
+}
+```
+
+Caddy's [`reverse_proxy`](https://caddyserver.com/docs/caddyfile/directives/reverse_proxy) handles
+WebSocket upgrades automatically, so `/connect` needs no separate route. From the directory of
+your **Caddy Compose project**, validate and reload (replace `caddy` if its service has another name):
+
+```sh
+docker compose exec caddy caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
+curl --fail https://sommelier.grokked.it/healthz
+```
+
+The commands assume your Caddyfile is mounted at `/etc/caddy/Caddyfile`; adapt that path if needed.
+Keep access logging disabled for this site, or redact query strings on `/connect`, which carry
+relay credentials. Always include `-f compose.external-caddy.yaml` for subsequent Sommelier
+updates and lifecycle commands. The external network remains managed by your existing deployment.
+
+### Publish a container image
+
+A registry stores the **built image**, not the Dockerfile. GitHub Container Registry is `ghcr.io`.
+Google's former Container Registry (`gcr.io`) has been replaced by Artifact Registry; these are
+different services. See the [GitHub registry guide](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
+and [Google migration guide](https://cloud.google.com/artifact-registry/docs/transition/transition-from-gcr).
+
+To build locally and publish on GHCR, sign in with a GitHub personal access token (classic) with
+`write:packages` scope. Enter the token at Docker's password prompt; do not put it in source files.
+Run from the repository root, with a running Docker daemon and Buildx:
+
+```sh
+docker login ghcr.io -u lucamattiazzi
+docker buildx create --name sommelier-builder --driver docker-container --use
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  --file deploy/sommelier/Dockerfile \
+  --build-arg SOMMELIER_PUBLIC_ORIGIN=https://sommelier.grokked.it \
+  --label org.opencontainers.image.source=https://github.com/lucamattiazzi/sommelier \
+  --tag ghcr.io/lucamattiazzi/sommelier:grokked-v1 \
+  --push .
+```
+
+Create the builder once; reuse it with `docker buildx use sommelier-builder` for later builds.
+The two platforms cover both x86 and ARM Hetzner hosts, including builds made on Apple Silicon.
+Replace the owner, tag and origin for your own deployment. Use a new version tag for each release.
+In GitHub's package settings, make the container package public if it should be downloadable without
+authentication: a new GHCR package is private by default, even when the source repository is public.
+
+On the server, replace the entire `build:` block of the `sommelier` service in your chosen Compose
+file (`compose.yaml` or `compose.external-caddy.yaml`) with:
+
+```yaml
+    image: ghcr.io/lucamattiazzi/sommelier:grokked-v1
+```
+
+Keep the service's environment and the Caddy configuration. With `.env` set to
+`SOMMELIER_DOMAIN=sommelier.grokked.it`, run:
+
+```sh
+docker compose pull
+docker compose up -d
+curl --fail https://sommelier.grokked.it/healthz
+curl --fail -o sommelier-manifest.xml https://sommelier.grokked.it/manifest.xml
+```
+
+For an existing external proxy, use `docker compose -f compose.external-caddy.yaml pull` and
+`docker compose -f compose.external-caddy.yaml up -d` instead. Point DNS at the VM before checking public URLs.
+One image serves the homepage, TaskPane, assets, bridge download and encrypted relay.
+The manifest origin is currently embedded **at build time**: changing only the runtime environment
+does not rewrite it. Build a new image with the correct origin when self-hosting on another domain.
 
 ## Office manifest
 
@@ -57,7 +159,9 @@ with `pnpm manifest:hosted`; self-hosted builds always use their own `SOMMELIER_
 
 ## Change instance
 
-To move to another domain, update `.env` and rebuild with `docker compose up --build -d`. Distribute
+To move to another domain, update `.env` and rebuild with `docker compose up --build -d`. Publish
+the new image using the registry workflow if applicable. For an existing proxy, use
+`docker compose -f compose.external-caddy.yaml up --build -d` and update your Caddy site block. Distribute
 the newly generated manifest and pair again on that instance. Saved associations intentionally keep
 their original server address; they are not silently redirected to another operator. Excel stores
 saved terminal profiles per TaskPane origin.

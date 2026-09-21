@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { once } from "node:events";
-import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -11,6 +11,78 @@ import { chromium, expect } from "@playwright/test";
 import { createPairServer } from "../apps/server/dist/index.cjs";
 
 const run = promisify(execFile);
+test("task pane allows Excel frame ancestors and rejects unrelated sites", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "sommelier-framing-"));
+  await writeFile(join(directory, "taskpane.html"), "<h1>Framing fixture</h1>");
+  const server = await createPairServer({
+    port: 0,
+    publicOrigin: "https://addin.example.test",
+    staticDirectory: directory,
+  });
+  const browser = await chromium.launch();
+  const cases = [
+    ["https://onedrive.live.com", "https://excel.officeapps.live.com", true],
+    ["https://excel.cloud.microsoft", "https://excel.officeapps.live.com", true],
+    ["https://www.microsoft365.com", "https://excel.officeapps.live.com", true],
+    ["https://tenant.sharepoint.com", "https://excel.officeapps.live.com", true],
+    ["https://www.office.com", "https://excel.officeapps.live.com", true],
+    ["https://untrusted.example.test", "https://excel.officeapps.live.com", false],
+    ["https://onedrive.live.com", "https://untrusted.example.test", false],
+    ["https://office.com.untrusted.example.test", "https://excel.officeapps.live.com", false],
+  ];
+  try {
+    for (const [outer, inner, allowed] of cases) {
+      await t.test(`${outer} → ${inner}: ${allowed ? "allowed" : "blocked"}`, async () => {
+        const page = await browser.newPage();
+        try {
+          await page.route(`${outer}/host`, (route) =>
+            route.fulfill({
+              contentType: "text/html",
+              body: `<iframe src="${inner}/excel"></iframe>`,
+            }),
+          );
+          await page.route(`${inner}/excel`, (route) =>
+            route.fulfill({
+              contentType: "text/html",
+              body: '<iframe src="https://addin.example.test/taskpane.html"></iframe>',
+            }),
+          );
+          await page.route("https://addin.example.test/taskpane.html", async (route) =>
+            route.fulfill({
+              response: await page.request.get(
+                `http://${server.host}:${server.port}/taskpane.html`,
+              ),
+            }),
+          );
+          const blocked = allowed
+            ? undefined
+            : page.waitForEvent("console", (message) => message.text().includes("frame-ancestors"));
+          await page.goto(`${outer}/host`);
+          if (allowed) {
+            await expect(
+              page.frameLocator("iframe").frameLocator("iframe").getByRole("heading"),
+            ).toHaveText("Framing fixture");
+          } else {
+            await blocked;
+            for (const frame of page.frames()) {
+              assert.equal(
+                await frame.getByRole("heading", { name: "Framing fixture" }).count(),
+                0,
+              );
+            }
+          }
+        } finally {
+          await page.close();
+        }
+      });
+    }
+  } finally {
+    await browser.close();
+    await server.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test(
   "task pane pairs, approves encrypted workbook changes and remembers terminals",
   { timeout: 60_000 },
@@ -58,7 +130,7 @@ test(
     try {
       await page.goto(origin);
       await expect(
-        page.getByRole("heading", { name: "Your spreadsheet. Your AI agent." }),
+        page.getByRole("heading", { name: "Work in Excel with YOUR personal agent." }),
       ).toBeVisible();
       await expect(page.getByRole("link", { name: "Download Excel add-in" })).toHaveAttribute(
         "href",
@@ -79,6 +151,9 @@ test(
       }
       await page.setViewportSize({ width: 1100, height: 850 });
       await page.screenshot({ path: "artifacts/sommelier-home-desktop.png", fullPage: true });
+      await page.emulateMedia({ colorScheme: "dark" });
+      await page.screenshot({ path: "artifacts/sommelier-home-dark.png", fullPage: true });
+      await page.emulateMedia({ colorScheme: "light" });
       await page.setViewportSize({ width: 320, height: 640 });
       await page.screenshot({ path: "artifacts/sommelier-home-320.png", fullPage: true });
       assert.equal(

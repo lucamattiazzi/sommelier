@@ -58,7 +58,7 @@ function secureHeaders(response: ServerResponse): void {
   response.setHeader("permissions-policy", "camera=(), microphone=(), geolocation=()");
   response.setHeader(
     "content-security-policy",
-    "default-src 'self'; script-src 'self' https://appsforoffice.microsoft.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https: wss:; frame-ancestors https://*.office.com https://*.officeapps.live.com",
+    "default-src 'self'; script-src 'self' https://appsforoffice.microsoft.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https: wss:; frame-ancestors https://*.office.com https://*.officeapps.live.com https://*.cloud.microsoft https://*.microsoft365.com https://onedrive.live.com https://*.sharepoint.com",
   );
 }
 

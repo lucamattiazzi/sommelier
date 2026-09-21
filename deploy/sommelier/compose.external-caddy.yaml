@@ -1,0 +1,21 @@
+services:
+  sommelier:
+    build:
+      context: ../..
+      dockerfile: deploy/sommelier/Dockerfile
+      args:
+        SOMMELIER_PUBLIC_ORIGIN: https://${SOMMELIER_DOMAIN:?Set SOMMELIER_DOMAIN in .env}
+    restart: unless-stopped
+    environment:
+      SOMMELIER_PUBLIC_ORIGIN: https://${SOMMELIER_DOMAIN:?Set SOMMELIER_DOMAIN in .env}
+    expose:
+      - "3000"
+    networks:
+      - caddy
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  caddy:
+    external: true
+    name: ${CADDY_NETWORK:?Set CADDY_NETWORK to your existing proxy network}
