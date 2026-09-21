@@ -18,6 +18,10 @@
 body { margin: 0; }
 main { max-width: 808px; margin: 0 auto; padding: 24px 20px 32px; }
 header { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); padding-bottom: 16px; font-size: 32px; font-weight: 700; color: var(--strong); }
+.brand { display: flex; align-items: center; gap: 12px; color: var(--strong); }
+.site-link { margin-left: auto; display: grid; place-items: center; min-width: 44px; min-height: 44px; font-size: 26px; flex-shrink: 0; }
+nav[aria-label="Documentation"] { display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 20px 0 32px; font-size: 16px; }
+nav [aria-current="page"] { color: var(--strong); font-weight: 700; text-decoration: underline; }
 .eyebrow { margin: 16px 0 28px; font-size: 16px; color: var(--muted); }
 h1 { margin: 0 0 20px; font-size: clamp(30px, 5vw, 40px); line-height: 1.2; color: var(--strong); }
 .intro { margin: 0 0 16px; }

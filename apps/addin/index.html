@@ -12,7 +12,8 @@
   </head>
   <body>
     <main>
-      <header><img src="/icon-80.png" width="40" height="40" alt="" /><span>Sommelier</span></header>
+      <header><a class="brand" href="/"><img src="/icon-80.png" width="40" height="40" alt="" /><span>Sommelier</span></a><a class="site-link" href="https://grokked.it" aria-label="Visit grokked.it" title="grokked.it">🌐</a></header>
+      <nav aria-label="Documentation"><a href="/setup.html">Setup guide</a><a href="/privacy.html">Privacy</a><a href="/support.html">Help</a><a href="/self-host.html">Self-host</a></nav>
       <p class="eyebrow">A wordplay on Pairing and Excel.</p>
       <h1>Work in Excel with YOUR personal agent.</h1>
       <p class="intro">Connect Excel to your agent, running in your favourite harness. You don't need to give Copilot access to data you don't want to share!</p>
@@ -32,7 +33,6 @@
       </ol>
       <p class="privacy">Workbook traffic is encrypted between Excel and the local bridge. The relay cannot read it. Your chosen agent controls what it sends to its model provider.</p>
       <p class="note">Requires Node.js 22.12+ and an agent with shell access. Keep the agent listening while you work. The setup prompt includes a private connection key shared with that agent.</p>
-      <footer><a href="/setup.html">Setup guide</a><a href="/privacy.html">Privacy</a><a href="/support.html">Help</a><a href="/self-host.html">Self-host</a></footer>
     </main>
   </body>
 </html>
