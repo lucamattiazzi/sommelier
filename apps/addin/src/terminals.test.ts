@@ -61,6 +61,8 @@ it("provides a self-contained prompt for an existing agent without a preinstalle
   expect(prompt).not.toContain("SKILL.md");
   expect(prompt).not.toContain("references/protocol.md");
   expect(prompt).not.toContain("installed sommelier skill");
+  expect(prompt).toContain('docs-search --query "XLOOKUP"');
+  expect(prompt).toContain("docs-get --id xlookup");
   expect(prompt).toContain("excel.range.read");
   expect(prompt).toContain("excel.chart.create");
   expect(prompt).toContain("taskPaneConnected");

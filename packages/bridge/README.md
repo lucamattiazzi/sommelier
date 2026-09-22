@@ -43,3 +43,20 @@ profiles. A timeout never causes mutation replay. Slow trace listeners cannot bl
 
 `sommelier-relay relay --port 4310` remains the legacy **plaintext loopback relay**; the native adapters
 require encrypted `/connect` profiles from the hosted Sommelier relay instead.
+
+## Offline Excel documentation
+
+The same curated catalog is available through MCP tools `excel_docs_search` / `excel_docs_get`
+and standalone CLI commands. No workbook connection, skill, API key or global installation is needed:
+
+```sh
+npx --yes --ignore-scripts --package=@lucamattiazzi/sommelier@0.2.0-beta.2 -- sommelier-session docs-search --query "CERCA.X" --limit 3
+npx --yes --ignore-scripts --package=@lucamattiazzi/sommelier@0.2.0-beta.2 -- sommelier-session docs-get --id xlookup
+```
+
+Search returns IDs and short summaries; get returns syntax, synthetic examples, pitfalls,
+compatibility notes and Microsoft source links. Both include `catalogVersion`; CLI results use
+`{ok:true,result:...}`. Queries accept 1–200 characters, limits 1–10 (default 5). Unknown IDs fail.
+Function names and English/Italian aliases work; this is a small keyword index, not semantic search.
+The catalog is bundled and versioned, not live documentation or a formula validator. The commands
+perform no network requests; npx may access the package registry to download/cache the package.

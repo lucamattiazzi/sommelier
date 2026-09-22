@@ -229,13 +229,17 @@ export async function createPairServer(options: PairServerOptions): Promise<Pair
       }
       if (
         request.method === "GET" &&
-        ["/agent/session.mjs", "/agent/lib/encrypted-socket.mjs"].includes(url.pathname)
+        [
+          "/agent/session.mjs",
+          "/agent/lib/encrypted-socket.mjs",
+          "/agent/lib/excel-docs.mjs",
+        ].includes(url.pathname)
       ) {
         try {
           const contents = await readFile(
-            url.pathname.endsWith("encrypted-socket.mjs")
-              ? resolve(bridgeScript, "../lib/encrypted-socket.mjs")
-              : bridgeScript,
+            url.pathname === "/agent/session.mjs"
+              ? bridgeScript
+              : resolve(bridgeScript, "..", url.pathname.slice("/agent/".length)),
           );
           secureHeaders(response);
           response.writeHead(200, {

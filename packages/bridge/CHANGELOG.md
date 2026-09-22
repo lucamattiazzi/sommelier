@@ -4,6 +4,9 @@
 
 ### Patch Changes
 
+- Add a versioned offline Excel documentation catalog, shared by `excel_docs_search` /
+  `excel_docs_get` MCP tools and `docs-search` / `docs-get` portable bridge commands.
+
 - Expose `sommelier-session` for pairing, workbook RPC and reconnection through npx,
   without a global installation, project setup or preinstalled skill.
 

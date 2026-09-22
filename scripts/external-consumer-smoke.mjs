@@ -188,6 +188,7 @@ for (const asset of [
   "skill/SKILL.md",
   "skill/scripts/session.mjs",
   "skill/scripts/lib/encrypted-socket.mjs",
+  "skill/scripts/lib/excel-docs.mjs",
 ]) {
   if (!readFileSync(join(adapterDist, asset), "utf8").length)
     throw new Error(`Missing adapter asset: ${asset}`);
@@ -199,6 +200,16 @@ const emptyProfiles = spawnSync(process.execPath, [join(adapterDist, "agent.js")
 });
 if (emptyProfiles.status !== 0 || JSON.parse(emptyProfiles.stdout).terminals.length !== 0)
   throw new Error("Packed adapter cannot list profiles.");
+
+const documentation = JSON.parse(
+  run(
+    join(consumerDirectory, "node_modules/.bin/sommelier-session"),
+    ["docs-search", "--query", "CERCA.X", "--limit", "1"],
+    consumerDirectory,
+  ),
+);
+if (documentation.result.results[0]?.id !== "xlookup")
+  throw new Error("Packed adapter cannot search offline Excel documentation.");
 
 // The existing Sommelier CLI reports usage with status 1 when no subcommand is supplied.
 const pairUsage = spawnSync(join(consumerDirectory, "node_modules/.bin/sommelier-relay"), [], {

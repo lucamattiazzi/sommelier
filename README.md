@@ -54,6 +54,9 @@ The connection receives a default name. Once connected, use **Options → Connec
 it. Chat fills the pane; connection settings, workbook context and recent operations stay in Options.
 A stopped agent must resume listening before it can receive TaskPane messages.
 
+The bridge also provides [offline Excel documentation](docs/excel-documentation.md): search functions
+and topics, then retrieve syntax, examples and compatibility notes through CLI or MCP.
+
 The portable skill is optional for subsequent reconnections. Native adapters remain available as
 an alternative; see [adapter setup](docs/harness-adapters.md). There is no fixed hosted domain.
 

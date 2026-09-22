@@ -373,6 +373,7 @@ test(
         "/manifest.xml",
         "/agent/session.mjs",
         "/agent/lib/encrypted-socket.mjs",
+        "/agent/lib/excel-docs.mjs",
       ]) {
         const response = await fetch(`${origin}${path}`);
         assert.equal(response.status, 200, path);

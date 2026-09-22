@@ -587,6 +587,15 @@ async function main() {
   }
 
   const command = process.argv[2];
+  if (command === "docs-search" || command === "docs-get") {
+    const { searchExcelDocs, getExcelDoc } = await import("./lib/excel-docs.mjs");
+    const result =
+      command === "docs-search"
+        ? searchExcelDocs({ query: argument("--query"), limit: Number(argument("--limit", "5")) })
+        : getExcelDoc({ id: argument("--id") });
+    process.stdout.write(`${JSON.stringify({ ok: true, result })}\n`);
+    return;
+  }
   const name = profileName();
   if (command === "list") {
     let names = [];
@@ -673,7 +682,7 @@ async function main() {
       payload = { command: "stop" };
       break;
     default:
-      fail("Usage: session.mjs start|status|next|request|reply|stop");
+      fail("Usage: session.mjs docs-search|docs-get|start|status|next|request|reply|stop");
   }
 
   const response = await send(controlPath, payload);

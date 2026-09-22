@@ -352,3 +352,18 @@ describe("Sommelier server", () => {
     addin.close();
   });
 });
+
+it("serves the standalone offline documentation module alongside the bridge", async () => {
+  server = await createPairServer({
+    port: 0,
+    publicOrigin: "https://pair.example.test",
+    bridgeScript: fileURLToPath(
+      new URL("../../../skills/sommelier/scripts/session.mjs", import.meta.url),
+    ),
+  });
+  const response = await fetch(`http://${server.host}:${server.port}/agent/lib/excel-docs.mjs`);
+  expect(response.status).toBe(200);
+  expect(response.headers.get("content-type")).toContain("text/javascript");
+  expect(response.headers.get("cache-control")).toBe("no-cache");
+  expect(await response.text()).toContain("searchExcelDocs");
+});
